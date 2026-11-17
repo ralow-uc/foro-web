@@ -1,8 +1,44 @@
 import { Routes } from '@angular/router';
-import { invitadoGuard } from './core/guards';
+import { authGuard, invitadoGuard } from './core/guards';
 
 /** Rutas de la aplicación (componentes cargados en diferido). */
 export const routes: Routes = [
+  {
+    path: '',
+    pathMatch: 'full',
+    title: 'CuboClub · Foro de speedcubing',
+    loadComponent: () => import('./features/inicio/inicio').then((m) => m.InicioComponent),
+  },
+  {
+    path: 'categorias/:slug',
+    title: 'Categoría · CuboClub',
+    loadComponent: () => import('./features/foro/categoria/categoria').then((m) => m.CategoriaComponent),
+  },
+  {
+    path: 'temas/nuevo',
+    title: 'Nuevo tema · CuboClub',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/foro/formulario-tema/formulario-tema').then((m) => m.FormularioTemaComponent),
+  },
+  {
+    path: 'temas/:id/editar',
+    title: 'Editar tema · CuboClub',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/foro/formulario-tema/formulario-tema').then((m) => m.FormularioTemaComponent),
+  },
+  {
+    path: 'temas/:id',
+    title: 'Tema · CuboClub',
+    loadComponent: () => import('./features/foro/tema-detalle/tema-detalle').then((m) => m.TemaDetalleComponent),
+  },
+  {
+    path: 'mis-temas',
+    title: 'Mis temas · CuboClub',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/foro/mis-temas/mis-temas').then((m) => m.MisTemasComponent),
+  },
   {
     path: 'login',
     title: 'Ingresar · CuboClub',
