@@ -280,3 +280,6 @@ main { flex: 1 0 auto; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
+
+/* Tarjeta de resumen seleccionada (panel de moderación y administración). */
+.tarjeta-panel.activa { outline: 3px solid var(--cc-naranja); outline-offset: -3px; }

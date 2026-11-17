@@ -1,0 +1,210 @@
+<section class="container py-4 py-md-5">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-2 mb-4">
+    <div>
+      <h1 class="h2 mb-1"><i class="bi bi-shield-check me-2" aria-hidden="true"></i>Panel de moderación</h1>
+      <p class="text-body-secondary mb-0">
+        Revisa los reportes de la comunidad y aplica las <a routerLink="/normas">normas del foro</a>.
+        @if (!moderacion.puedeLevantar()) { Solo un administrador puede levantar un baneo. }
+      </p>
+    </div>
+  </div>
+
+  <!-- Resumen: 2 columnas en móvil, 4 desde tablet -->
+  <div class="row g-3 mb-4">
+    @for (p of pestanas; track p.id) {
+      <div class="col-6 col-md-3">
+        <button type="button" class="tarjeta-panel w-100 h-100 p-3 text-start border-0" [class.activa]="pestana() === p.id"
+          (click)="pestana.set(p.id)" [attr.aria-pressed]="pestana() === p.id">
+          <div class="small text-body-secondary"><i class="bi me-1" [class]="p.icono" aria-hidden="true"></i>{{ p.texto }}</div>
+          <div class="fs-2 fw-bold fuente-titulos">{{ contador(p.id) }}</div>
+        </button>
+      </div>
+    }
+  </div>
+
+  <ul class="nav nav-tabs mb-3 flex-nowrap overflow-auto" role="tablist">
+    @for (p of pestanas; track p.id) {
+      <li class="nav-item" role="presentation">
+        <button type="button" class="nav-link text-nowrap" role="tab" [class.active]="pestana() === p.id"
+          [attr.aria-selected]="pestana() === p.id" (click)="pestana.set(p.id)">
+          {{ p.texto }} <span class="badge rounded-pill text-bg-light border ms-1">{{ contador(p.id) }}</span>
+        </button>
+      </li>
+    }
+  </ul>
+
+  @switch (pestana()) {
+    @case ('reportes') {
+      <div class="row g-3">
+        @for (r of moderacion.reportesPendientes(); track r.id) {
+          <div class="col-12 col-xl-6">
+            <article class="card h-100">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-1 mb-2">
+                  <span class="badge text-bg-dark">{{ r.tipo === 'TEMA' ? 'Tema' : 'Comentario' }}</span>
+                  @if (r.norma; as n) {
+                    <span class="badge text-bg-light border">{{ n.codigo }} · {{ n.nombre }}</span>
+                  }
+                  @if (r.contenidoBaneado) {
+                    <span class="badge text-bg-danger">Ya baneado</span>
+                  }
+                </div>
+                <h2 class="h6 text-break mb-1">“{{ r.resumenContenido }}”</h2>
+                @if (r.autorContenido; as autor) {
+                  <p class="small text-body-secondary mb-2">Autor del contenido: &#64;{{ autor.nombreUsuario }}</p>
+                }
+                <blockquote class="small border-start border-3 ps-2 mb-3">{{ r.detalle }}</blockquote>
+                <div class="d-flex align-items-center gap-2 small text-body-secondary">
+                  <app-avatar [nombre]="r.reportante.nombreVisible" [color]="r.reportante.colorAvatar" [tamano]="24" />
+                  Reportado por &#64;{{ r.reportante.nombreUsuario }} · {{ r.fechaCreacion | tiempoRelativo }}
+                </div>
+              </div>
+              <div class="card-footer bg-transparent d-flex flex-wrap gap-2">
+                @if (r.temaId) {
+                  <a class="btn btn-sm btn-outline-dark" [routerLink]="['/temas', r.temaId]"
+                    [fragment]="r.tipo === 'COMENTARIO' ? 'comentario-' + r.contenidoId : undefined">
+                    <i class="bi bi-eye me-1" aria-hidden="true"></i>Ver contenido
+                  </a>
+                }
+                @if (!r.contenidoBaneado) {
+                  <button type="button" class="btn btn-sm btn-danger" (click)="banearDesdeReporte(r)">
+                    <i class="bi bi-slash-circle me-1" aria-hidden="true"></i>Banear
+                  </button>
+                }
+                <button type="button" class="btn btn-sm btn-outline-secondary" (click)="descartar(r)">
+                  <i class="bi bi-x-circle me-1" aria-hidden="true"></i>Descartar
+                </button>
+              </div>
+            </article>
+          </div>
+        } @empty {
+          <div class="col-12">
+            <div class="tarjeta-panel p-5 text-center text-body-secondary">
+              <i class="bi bi-check2-circle fs-1" aria-hidden="true"></i>
+              <p class="mt-2 mb-0">No hay reportes pendientes. ¡La comunidad se porta bien!</p>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    @case ('baneos') {
+      @if (moderacion.sancionesActivas().length === 0) {
+        <div class="tarjeta-panel p-5 text-center text-body-secondary">No hay baneos activos.</div>
+      } @else {
+        <!-- Escritorio (≥ 992 px): tabla -->
+        <div class="tarjeta-panel d-none d-lg-block">
+          <div class="table-responsive">
+            <table class="table align-middle mb-0">
+              <caption class="visually-hidden">Baneos activos</caption>
+              <thead>
+                <tr>
+                  <th scope="col" class="ps-3">Contenido</th>
+                  <th scope="col">Norma</th>
+                  <th scope="col">Motivo</th>
+                  <th scope="col">Moderador</th>
+                  <th scope="col" class="text-end pe-3">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (s of moderacion.sancionesActivas(); track s.id) {
+                  <tr>
+                    <td class="ps-3" style="min-width: 14rem">
+                      <span class="badge text-bg-dark me-1">{{ s.tipo === 'TEMA' ? 'Tema' : 'Comentario' }}</span>
+                      @if (s.temaId) {
+                        <a [routerLink]="['/temas', s.temaId]">{{ s.resumenContenido }}</a>
+                      } @else {
+                        {{ s.resumenContenido }}
+                      }
+                    </td>
+                    <td class="text-nowrap">{{ s.norma?.codigo }}</td>
+                    <td class="small">{{ s.motivo }}</td>
+                    <td class="small text-nowrap">&#64;{{ s.moderador.nombreUsuario }}<br />{{ s.fechaCreacion | date: 'd MMM y' }}</td>
+                    <td class="text-end pe-3 text-nowrap">
+                      @if (moderacion.puedeLevantar()) {
+                        <button type="button" class="btn btn-sm btn-success" (click)="levantar(s)">Levantar</button>
+                      } @else {
+                        <span class="small text-body-secondary">Solo ADMIN</span>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Móvil y tablet (< 992 px): tarjetas en 1 o 2 columnas -->
+        <div class="row g-3 d-lg-none">
+          @for (s of moderacion.sancionesActivas(); track s.id) {
+            <div class="col-12 col-md-6">
+              <article class="card h-100 contenido-baneado">
+                <div class="card-body">
+                  <span class="badge text-bg-dark mb-2">{{ s.tipo === 'TEMA' ? 'Tema' : 'Comentario' }} · {{ s.norma?.codigo }}</span>
+                  <h2 class="h6 text-break">{{ s.resumenContenido }}</h2>
+                  <p class="small mb-1">{{ s.motivo }}</p>
+                  <p class="small text-body-secondary mb-0">Por &#64;{{ s.moderador.nombreUsuario }} · {{ s.fechaCreacion | date: 'd MMM y' }}</p>
+                </div>
+                @if (moderacion.puedeLevantar()) {
+                  <div class="card-footer bg-transparent">
+                    <button type="button" class="btn btn-sm btn-success" (click)="levantar(s)">Levantar baneo</button>
+                  </div>
+                }
+              </article>
+            </div>
+          }
+        </div>
+      }
+    }
+
+    @case ('historial') {
+      <div class="row g-4">
+        <div class="col-12 col-lg-6">
+          <h2 class="h5">Baneos levantados</h2>
+          <ul class="list-group">
+            @for (s of moderacion.sancionesLevantadas(); track s.id) {
+              <li class="list-group-item">
+                <div class="d-flex justify-content-between gap-2 small">
+                  <strong class="text-break">{{ s.resumenContenido }}</strong>
+                  <span class="badge text-bg-light border flex-shrink-0">{{ s.norma?.codigo }}</span>
+                </div>
+                <div class="small">Motivo del baneo: {{ s.motivo }}</div>
+                <div class="small text-success">Levantado por &#64;{{ s.levantadaPor?.nombreUsuario }}: {{ s.motivoLevantamiento }}</div>
+              </li>
+            } @empty {
+              <li class="list-group-item text-body-secondary">Sin baneos levantados.</li>
+            }
+          </ul>
+        </div>
+        <div class="col-12 col-lg-6">
+          <h2 class="h5">Reportes resueltos</h2>
+          <ul class="list-group">
+            @for (r of moderacion.reportesResueltos(); track r.id) {
+              <li class="list-group-item">
+                <div class="d-flex justify-content-between gap-2 small">
+                  <strong class="text-break">{{ r.resumenContenido }}</strong>
+                  <span class="badge flex-shrink-0" [class]="etiquetaEstado(r.estado).clase">{{ etiquetaEstado(r.estado).texto }}</span>
+                </div>
+                <div class="small text-body-secondary">{{ r.norma?.codigo }} · reportado por &#64;{{ r.reportante.nombreUsuario }}</div>
+              </li>
+            } @empty {
+              <li class="list-group-item text-body-secondary">Sin reportes resueltos.</li>
+            }
+          </ul>
+        </div>
+      </div>
+    }
+
+    @case ('cerrados') {
+      <ul class="list-group">
+        @for (t of moderacion.temasCerrados(); track t.id) {
+          <li class="list-group-item d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
+            <a [routerLink]="['/temas', t.id]" class="text-break"><i class="bi bi-lock-fill me-1" aria-hidden="true"></i>{{ t.titulo }}</a>
+            <button type="button" class="btn btn-sm btn-outline-dark" (click)="reabrir(t.id)">Reabrir</button>
+          </li>
+        } @empty {
+          <li class="list-group-item text-body-secondary">No hay temas cerrados. Puedes cerrar un tema desde su página.</li>
+        }
+      </ul>
+    }
+  }
+</section>

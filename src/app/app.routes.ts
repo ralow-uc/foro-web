@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard, invitadoGuard } from './core/guards';
+import { authGuard, invitadoGuard, rolGuard } from './core/guards';
 
 /** Rutas de la aplicación (componentes cargados en diferido). */
 export const routes: Routes = [
@@ -38,6 +38,18 @@ export const routes: Routes = [
     title: 'Mis temas · CuboClub',
     canActivate: [authGuard],
     loadComponent: () => import('./features/foro/mis-temas/mis-temas').then((m) => m.MisTemasComponent),
+  },
+  {
+    path: 'normas',
+    title: 'Normas del foro · CuboClub',
+    loadComponent: () => import('./features/normas/normas').then((m) => m.NormasComponent),
+  },
+  {
+    path: 'moderacion',
+    title: 'Moderación · CuboClub',
+    canActivate: [rolGuard(['MODERADOR', 'ADMIN'])],
+    loadComponent: () =>
+      import('./features/moderacion/panel/panel-moderacion').then((m) => m.PanelModeracionComponent),
   },
   {
     path: 'login',
