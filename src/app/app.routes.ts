@@ -40,6 +40,12 @@ export const routes: Routes = [
     loadComponent: () => import('./features/foro/mis-temas/mis-temas').then((m) => m.MisTemasComponent),
   },
   {
+    path: 'perfil',
+    title: 'Mi perfil · CuboClub',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/perfil/perfil').then((m) => m.PerfilComponent),
+  },
+  {
     path: 'normas',
     title: 'Normas del foro · CuboClub',
     loadComponent: () => import('./features/normas/normas').then((m) => m.NormasComponent),
