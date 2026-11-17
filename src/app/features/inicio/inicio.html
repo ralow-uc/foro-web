@@ -1,0 +1,87 @@
+<section class="hero py-5">
+  <div class="container position-relative" style="z-index: 1">
+    <div class="row align-items-center g-4">
+      <div class="col-12 col-md-7 col-lg-6">
+        <p class="etiqueta-superior mb-2" style="color: var(--cc-naranja-vivo)">Foro de speedcubing en español</p>
+        <h1 class="display-5 mb-3">Gira, aprende y <span class="resaltado">comparte tus tiempos</span>.</h1>
+        <p class="lead mb-4">
+          CuboClub reúne a quienes resuelven cubos y puzzles de giro: métodos, algoritmos, hardware, competencias WCA y
+          mucho más.
+        </p>
+        <div class="d-flex flex-column flex-sm-row gap-2">
+          @if (auth.estaAutenticado()) {
+            <a routerLink="/temas/nuevo" class="btn btn-primary btn-lg btn-sticker"><i class="bi bi-plus-lg me-2" aria-hidden="true"></i>Publicar un tema</a>
+            <a routerLink="/mis-temas" class="btn btn-outline-light btn-lg">Mis temas</a>
+          } @else {
+            <a routerLink="/registro" class="btn btn-primary btn-lg btn-sticker"><i class="bi bi-person-plus me-2" aria-hidden="true"></i>Crear cuenta</a>
+            <a routerLink="/login" class="btn btn-outline-light btn-lg">Ya tengo cuenta</a>
+          }
+        </div>
+        <div class="row g-3 mt-4 text-center text-sm-start" aria-label="Estadísticas del foro">
+          @let stats = foro.estadisticas();
+          <div class="col-6 col-sm-3"><div class="cifra mb-1">{{ stats.temas }}</div><div class="cifra-etiqueta">Temas</div></div>
+          <div class="col-6 col-sm-3"><div class="cifra mb-1">{{ stats.comentarios }}</div><div class="cifra-etiqueta">Comentarios</div></div>
+          <div class="col-6 col-sm-3"><div class="cifra mb-1">{{ stats.miembros }}</div><div class="cifra-etiqueta">Miembros</div></div>
+          <div class="col-6 col-sm-3"><div class="cifra mb-1">{{ stats.categorias }}</div><div class="cifra-etiqueta">Categorías</div></div>
+        </div>
+      </div>
+      <div class="col-12 col-md-5 col-lg-6 text-center d-none d-md-block">
+        <img src="img/ilustracion-hero.svg" alt="Cubo mezclado, pirámide y cronómetro" class="img-fluid hero-img" width="520" height="440" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container py-5" aria-labelledby="titulo-categorias">
+  <div class="titulo-seccion mb-4">
+    <h2 id="titulo-categorias" class="h3 mb-0">Categorías</h2>
+    <span class="pegatinas" aria-hidden="true"><span></span><span></span><span></span></span>
+  </div>
+  <div class="row g-3 g-lg-4">
+    @for (c of foro.categoriasConConteo(); track c.id) {
+      <div class="col-12 col-sm-6 col-lg-4">
+        <a class="card tarjeta-sticker tarjeta-categoria h-100" [routerLink]="['/categorias', c.slug]">
+          <div class="card-body d-flex gap-3">
+            <app-icono-categoria [slug]="c.slug" [tamano]="52" />
+            <div class="min-w-0">
+              <div class="d-flex justify-content-between align-items-start gap-2">
+                <h3 class="h5 mb-1">{{ c.nombre }}</h3>
+                <span class="conteo" [attr.aria-label]="c.cantidadTemas + ' temas'">{{ c.cantidadTemas }} {{ c.cantidadTemas === 1 ? 'tema' : 'temas' }}</span>
+              </div>
+              <p class="small text-body-secondary mb-0">{{ c.descripcion }}</p>
+            </div>
+          </div>
+        </a>
+      </div>
+    }
+  </div>
+</section>
+
+<section class="container pb-4" aria-labelledby="titulo-recientes">
+  <div class="row g-4">
+    <div class="col-12 col-lg-8">
+      <div class="titulo-seccion mb-3">
+        <h2 id="titulo-recientes" class="h3 mb-0">Actividad reciente</h2>
+      </div>
+      <div class="lista-temas">
+        @for (t of foro.temasRecientes(); track t.id) {
+          <app-fila-tema [tema]="t" />
+        } @empty {
+          <p class="p-4 mb-0 text-body-secondary">Aún no hay temas publicados.</p>
+        }
+      </div>
+    </div>
+    <aside class="col-12 col-lg-4">
+      <div class="tarjeta-panel p-4 h-100">
+        <h2 class="h5"><i class="bi bi-journal-check me-2 text-primary" aria-hidden="true"></i>Antes de publicar</h2>
+        <p class="small">Lee las normas de la comunidad. Los moderadores pueden banear contenido que las incumpla.</p>
+        <ul class="small ps-3 mb-3">
+          <li>Respeta a todos los cuberos, sin importar su método o tiempo.</li>
+          <li>Publica en la categoría correcta.</li>
+          <li>Nada de spam, datos personales ni piratería.</li>
+        </ul>
+        <a routerLink="/normas" class="btn btn-outline-primary btn-sm">Ver todas las normas</a>
+      </div>
+    </aside>
+  </div>
+</section>
