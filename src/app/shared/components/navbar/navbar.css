@@ -6,7 +6,12 @@
   --bs-navbar-active-color: #fff;
 }
 .barra .navbar-brand { color: #fff; }
-.nav-link { font-weight: 700; border-radius: 0.5rem; padding-inline: 0.75rem !important; }
+.nav-link { font-weight: 700; border-radius: 0.5rem; padding-inline: 0.75rem !important; white-space: nowrap; }
+/* En la barra horizontal los textos nunca se parten en dos líneas. */
+.barra .btn { white-space: nowrap; }
+@media (min-width: 1200px) and (max-width: 1399.98px) {
+  .nav-link { padding-inline: 0.55rem !important; }
+}
 .nav-link.active { background: rgba(255, 255, 255, 0.1); box-shadow: inset 0 -3px 0 var(--cc-naranja-vivo); }
 .dropdown-menu { min-width: 15rem; }
 .navbar-toggler { border: 2px solid rgba(255, 255, 255, 0.4); }
