@@ -38,13 +38,28 @@
             </div>
             <div class="contenido-tema">{{ t.contenido }}</div>
           </div>
-          @if (foro.puedeEditarTema(t) || foro.puedeEliminarTema(t)) {
+          @if (foro.puedeEditarTema(t) || foro.puedeEliminarTema(t) || foro.puedeReportar(t) || moderacion.puedeModerar()) {
             <div class="card-footer bg-transparent d-flex flex-wrap gap-2 acciones">
               @if (foro.puedeEditarTema(t)) {
                 <a class="btn btn-outline-dark" [routerLink]="['/temas', t.id, 'editar']"><i class="bi bi-pencil me-1" aria-hidden="true"></i>Editar</a>
               }
               @if (foro.puedeEliminarTema(t)) {
                 <button type="button" class="btn btn-outline-danger" (click)="eliminarTema()"><i class="bi bi-trash me-1" aria-hidden="true"></i>Eliminar</button>
+              }
+              @if (foro.puedeReportar(t)) {
+                <button type="button" class="btn btn-outline-secondary" (click)="reportarTema(t)"><i class="bi bi-flag me-1" aria-hidden="true"></i>Reportar</button>
+              }
+              @if (moderacion.puedeModerar()) {
+                <div class="ms-md-auto d-flex flex-wrap gap-2" role="group" aria-label="Acciones de moderación">
+                  @if (!t.sancion) {
+                    <button type="button" class="btn btn-danger" (click)="banearTema(t)"><i class="bi bi-slash-circle me-1" aria-hidden="true"></i>Banear tema</button>
+                  } @else if (moderacion.puedeLevantar()) {
+                    <button type="button" class="btn btn-success" (click)="levantarBaneo(t.sancion.id, 'TEMA', t.id, t.titulo)"><i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i>Levantar baneo</button>
+                  }
+                  <button type="button" class="btn btn-outline-dark" (click)="alternarCierre(t)">
+                    <i class="bi me-1" [class.bi-lock]="!t.cerrado" [class.bi-unlock]="t.cerrado" aria-hidden="true"></i>{{ t.cerrado ? 'Reabrir' : 'Cerrar' }}
+                  </button>
+                </div>
               }
             </div>
           }
@@ -94,6 +109,16 @@
                         }
                         @if (foro.puedeEliminarComentario(c)) {
                           <button type="button" class="btn btn-sm btn-outline-danger" (click)="eliminarComentario(c)"><i class="bi bi-trash me-1" aria-hidden="true"></i>Eliminar</button>
+                        }
+                        @if (foro.puedeReportar(c)) {
+                          <button type="button" class="btn btn-sm btn-outline-secondary" (click)="reportarComentario(c)"><i class="bi bi-flag me-1" aria-hidden="true"></i>Reportar</button>
+                        }
+                        @if (moderacion.puedeModerar()) {
+                          @if (!c.sancion) {
+                            <button type="button" class="btn btn-sm btn-outline-danger" (click)="banearComentario(c)"><i class="bi bi-slash-circle me-1" aria-hidden="true"></i>Banear</button>
+                          } @else if (moderacion.puedeLevantar()) {
+                            <button type="button" class="btn btn-sm btn-outline-success" (click)="levantarBaneo(c.sancion.id, 'COMENTARIO', c.id, c.contenido)"><i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i>Levantar baneo</button>
+                          }
                         }
                       </div>
                     }
