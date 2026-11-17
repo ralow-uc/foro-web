@@ -4,17 +4,23 @@ import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators } from '@
 import { Router, RouterLink } from '@angular/router';
 import { AutenticacionFacade } from '../../../core/facades/autenticacion.facade';
 import { ForoFacade, LIMITES_COMENTARIO } from '../../../core/facades/foro.facade';
-import { ComentarioVista } from '../../../core/models';
+import { ModeracionFacade } from '../../../core/facades/moderacion.facade';
+import { ComentarioVista, TemaVista } from '../../../core/models';
+import { extracto } from '../../../core/utils/texto';
 import { AvatarComponent } from '../../../shared/components/avatar/avatar';
 import { AvisoBaneoComponent } from '../../../shared/components/aviso-baneo/aviso-baneo';
 import { CampoErrorComponent } from '../../../shared/components/campo-error/campo-error';
 import { TiempoRelativoPipe } from '../../../shared/pipes/tiempo-relativo.pipe';
+import { AccionModeracionService } from '../../../shared/services/accion-moderacion.service';
 import { ConfirmacionService } from '../../../shared/services/confirmacion.service';
 import { NotificacionService } from '../../../shared/services/notificacion.service';
 import { largoMinimoSinEspacios, sinSoloEspacios } from '../../../shared/validators';
 import { NoEncontradoComponent } from '../../errores/no-encontrado';
 
-/** Detalle de un tema: contenido, comentarios, comentar, editar/eliminar lo propio. */
+/**
+ * Detalle de un tema: contenido, comentarios, comentar, editar/eliminar lo propio,
+ * reportar contenido ajeno y, para MODERADOR/ADMIN, banear, cerrar o reabrir.
+ */
 @Component({
   selector: 'app-tema-detalle',
   imports: [
@@ -33,6 +39,8 @@ import { NoEncontradoComponent } from '../../errores/no-encontrado';
 export class TemaDetalleComponent {
   protected readonly foro = inject(ForoFacade);
   protected readonly auth = inject(AutenticacionFacade);
+  protected readonly moderacion = inject(ModeracionFacade);
+  private readonly accionModeracion = inject(AccionModeracionService);
   private readonly router = inject(Router);
   private readonly notificaciones = inject(NotificacionService);
   private readonly confirmacion = inject(ConfirmacionService);
@@ -137,5 +145,54 @@ export class TemaDetalleComponent {
     }
     this.notificaciones.exito('El tema fue eliminado.');
     void this.router.navigateByUrl(slug ? `/categorias/${slug}` : '/');
+  }
+
+  // ------------------------------------------------------------ moderación
+
+  protected reportarTema(t: TemaVista): void {
+    void this.accionModeracion.abrir({ modo: 'reportar', tipo: 'TEMA', contenidoId: t.id, resumen: t.titulo });
+  }
+
+  protected reportarComentario(c: ComentarioVista): void {
+    void this.accionModeracion.abrir({
+      modo: 'reportar',
+      tipo: 'COMENTARIO',
+      contenidoId: c.id,
+      resumen: extracto(c.contenido, 110),
+    });
+  }
+
+  protected banearTema(t: TemaVista): void {
+    void this.accionModeracion.abrir({ modo: 'banear', tipo: 'TEMA', contenidoId: t.id, resumen: t.titulo });
+  }
+
+  protected banearComentario(c: ComentarioVista): void {
+    void this.accionModeracion.abrir({
+      modo: 'banear',
+      tipo: 'COMENTARIO',
+      contenidoId: c.id,
+      resumen: extracto(c.contenido, 110),
+    });
+  }
+
+  /** Solo ADMIN: levanta el baneo del tema o de un comentario. */
+  protected levantarBaneo(sancionId: number, tipo: 'TEMA' | 'COMENTARIO', contenidoId: number, resumen: string): void {
+    void this.accionModeracion.abrir({ modo: 'levantar', tipo, contenidoId, resumen, sancionId });
+  }
+
+  protected async alternarCierre(t: TemaVista): Promise<void> {
+    const cerrar = !t.cerrado;
+    const ok = await this.confirmacion.confirmar({
+      titulo: cerrar ? 'Cerrar tema' : 'Reabrir tema',
+      mensaje: cerrar
+        ? 'El tema seguirá visible, pero nadie podrá comentarlo hasta que se reabra.'
+        : 'El tema volverá a aceptar comentarios.',
+      textoConfirmar: cerrar ? 'Cerrar tema' : 'Reabrir tema',
+      variante: 'dark',
+    });
+    if (!ok) return;
+    const r = cerrar ? this.moderacion.cerrarTema(t.id) : this.moderacion.reabrirTema(t.id);
+    if (r.ok) this.notificaciones.exito(cerrar ? 'El tema fue cerrado.' : 'El tema fue reabierto.');
+    else this.notificaciones.error(r.error);
   }
 }
