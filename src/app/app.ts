@@ -1,12 +1,14 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { FooterComponent } from './shared/components/footer/footer';
+import { ModalConfirmacionComponent } from './shared/components/modal-confirmacion/modal-confirmacion';
+import { NavbarComponent } from './shared/components/navbar/navbar';
+import { ToastsComponent } from './shared/components/toasts/toasts';
 
+/** Componente raíz: estructura general (navbar, contenido, pie, toasts y modal global). */
 @Component({
-  imports: [RouterOutlet],
   selector: 'app-root',
-  styleUrl: './app.css',
+  imports: [RouterOutlet, NavbarComponent, FooterComponent, ToastsComponent, ModalConfirmacionComponent],
   templateUrl: './app.html',
 })
-export class App {
-  protected readonly title = signal('foro-web');
-}
+export class App {}
