@@ -283,3 +283,4 @@ main { flex: 1 0 auto; }
 
 /* Tarjeta de resumen seleccionada (panel de moderación y administración). */
 .tarjeta-panel.activa { outline: 3px solid var(--cc-naranja); outline-offset: -3px; }
+.list-group-item.active-norma { outline: 3px solid var(--cc-naranja); outline-offset: -3px; }
