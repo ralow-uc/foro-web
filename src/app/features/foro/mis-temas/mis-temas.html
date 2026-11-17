@@ -1,0 +1,97 @@
+<section class="container py-4 py-md-5">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
+    <div>
+      <h1 class="h2 mb-1">Mis temas</h1>
+      <p class="text-body-secondary mb-0">
+        Publicaste {{ temas().length }} {{ temas().length === 1 ? 'tema' : 'temas' }} que suman {{ totalComentarios() }} comentarios.
+      </p>
+    </div>
+    <a routerLink="/temas/nuevo" class="btn btn-primary btn-sticker"><i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Nuevo tema</a>
+  </div>
+
+  @if (temas().length === 0) {
+    <div class="tarjeta-panel p-5 text-center">
+      <i class="bi bi-collection fs-1 text-body-secondary" aria-hidden="true"></i>
+      <p class="mt-2">Todavía no publicas ningún tema.</p>
+      <a routerLink="/temas/nuevo" class="btn btn-primary">Publicar mi primer tema</a>
+    </div>
+  } @else {
+    <!-- Tablet y escritorio (≥ 768 px): tabla -->
+    <div class="tarjeta-panel d-none d-md-block">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <caption class="visually-hidden">Listado de mis temas</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="ps-3">Título</th>
+              <th scope="col">Categoría</th>
+              <th scope="col">Estado</th>
+              <th scope="col" class="text-end">Coment.</th>
+              <th scope="col" class="d-none d-lg-table-cell">Publicado</th>
+              <th scope="col" class="text-end pe-3">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (t of temas(); track t.id) {
+              <tr>
+                <td class="ps-3" style="min-width: 16rem">
+                  @if (t.sancion) {
+                    <span class="fw-bold">{{ t.titulo }}</span>
+                    <app-aviso-baneo class="d-block mt-1" [sancion]="t.sancion" [compacto]="true" />
+                  } @else {
+                    <a [routerLink]="['/temas', t.id]" class="fw-bold">{{ t.titulo }}</a>
+                  }
+                </td>
+                <td class="text-nowrap">{{ t.categoria?.nombre }}</td>
+                <td><span class="badge" [class]="estado(t).clase">{{ estado(t).texto }}</span></td>
+                <td class="text-end">{{ t.cantidadComentarios }}</td>
+                <td class="d-none d-lg-table-cell text-nowrap small">{{ t.fechaCreacion | date: 'd MMM y' }}</td>
+                <td class="text-end pe-3 text-nowrap">
+                  @if (!t.sancion) {
+                    <a class="btn btn-sm btn-outline-dark" [routerLink]="['/temas', t.id]" [attr.aria-label]="'Ver ' + t.titulo"><i class="bi bi-eye" aria-hidden="true"></i></a>
+                  }
+                  @if (foro.puedeEditarTema(t)) {
+                    <a class="btn btn-sm btn-outline-dark ms-1" [routerLink]="['/temas', t.id, 'editar']" [attr.aria-label]="'Editar ' + t.titulo"><i class="bi bi-pencil" aria-hidden="true"></i></a>
+                  }
+                  @if (foro.puedeEliminarTema(t)) {
+                    <button type="button" class="btn btn-sm btn-outline-danger ms-1" (click)="eliminar(t)" [attr.aria-label]="'Eliminar ' + t.titulo"><i class="bi bi-trash" aria-hidden="true"></i></button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Móvil (< 768 px): tarjetas -->
+    <ul class="list-unstyled d-md-none d-grid gap-3 mb-0">
+      @for (t of temas(); track t.id) {
+        <li class="card" [class.contenido-baneado]="t.sancion">
+          <div class="card-body">
+            <div class="d-flex justify-content-between gap-2 mb-1">
+              <span class="small text-body-secondary">{{ t.categoria?.nombre }}</span>
+              <span class="badge align-self-start" [class]="estado(t).clase">{{ estado(t).texto }}</span>
+            </div>
+            <h2 class="h6 text-break">{{ t.titulo }}</h2>
+            @if (t.sancion) {
+              <app-aviso-baneo class="d-block mb-2" [sancion]="t.sancion" [compacto]="true" />
+            }
+            <p class="small text-body-secondary mb-3">{{ t.cantidadComentarios }} comentarios · {{ t.fechaCreacion | date: 'd MMM y' }}</p>
+            <div class="d-flex gap-2">
+              @if (!t.sancion) {
+                <a class="btn btn-sm btn-outline-dark flex-fill" [routerLink]="['/temas', t.id]">Ver</a>
+              }
+              @if (foro.puedeEditarTema(t)) {
+                <a class="btn btn-sm btn-outline-dark flex-fill" [routerLink]="['/temas', t.id, 'editar']">Editar</a>
+              }
+              @if (foro.puedeEliminarTema(t)) {
+                <button type="button" class="btn btn-sm btn-outline-danger flex-fill" (click)="eliminar(t)">Eliminar</button>
+              }
+            </div>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</section>

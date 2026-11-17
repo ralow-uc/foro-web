@@ -1,0 +1,86 @@
+@if (categoria(); as c) {
+  <section class="fondo-cuadricula border-bottom py-4 py-md-5">
+    <div class="container">
+      <nav aria-label="Ruta de navegación">
+        <ol class="breadcrumb small mb-3">
+          <li class="breadcrumb-item"><a routerLink="/">Inicio</a></li>
+          <li class="breadcrumb-item active" aria-current="page">{{ c.nombre }}</li>
+        </ol>
+      </nav>
+      <div class="row align-items-center g-3">
+        <div class="col-auto"><app-icono-categoria [slug]="c.slug" [tamano]="64" /></div>
+        <div class="col">
+          <h1 class="h2 mb-1">{{ c.nombre }}</h1>
+          <p class="mb-0 text-body-secondary">{{ c.descripcion }}</p>
+        </div>
+        <div class="col-12 col-md-auto">
+          @if (auth.estaAutenticado()) {
+            <a class="btn btn-primary btn-sticker w-100" routerLink="/temas/nuevo" [queryParams]="{ categoria: c.slug }">
+              <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Nuevo tema aquí
+            </a>
+          } @else {
+            <a class="btn btn-outline-primary w-100" routerLink="/login" [queryParams]="{ volver: '/categorias/' + c.slug }">Ingresa para publicar</a>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container py-4">
+    <form [formGroup]="filtros" class="tarjeta-panel p-3 mb-4" role="search" aria-label="Filtrar temas" novalidate>
+      <div class="row g-2 g-md-3 align-items-end">
+        <div class="col-12 col-md-5 col-lg-6">
+          <label for="filtro-texto" class="form-label">Buscar</label>
+          <div class="input-group has-validation">
+            <span class="input-group-text"><i class="bi bi-search" aria-hidden="true"></i></span>
+            <input id="filtro-texto" type="search" class="form-control" formControlName="texto" maxlength="100"
+              placeholder="Título, contenido o autor…" [class.is-invalid]="filtros.controls.texto.invalid"
+              aria-describedby="filtro-texto-error" />
+          </div>
+          <app-campo-error [control]="filtros.controls.texto" idError="filtro-texto-error" />
+        </div>
+        <div class="col-6 col-md-3">
+          <label for="filtro-autor" class="form-label">Autor</label>
+          <select id="filtro-autor" class="form-select" formControlName="autorId">
+            <option value="">Todos</option>
+            @for (a of autores(); track a.id) {
+              <option [value]="a.id">&#64;{{ a.nombreUsuario }}</option>
+            }
+          </select>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+          <label for="filtro-orden" class="form-label">Ordenar por</label>
+          <select id="filtro-orden" class="form-select" formControlName="orden" required>
+            @for (o of opcionesOrden; track o.valor) {
+              <option [value]="o.valor">{{ o.etiqueta }}</option>
+            }
+          </select>
+        </div>
+      </div>
+    </form>
+
+    @let r = resultado();
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2" id="listado-temas">
+      <p class="mb-0 small text-body-secondary" aria-live="polite">
+        {{ r.total }} {{ r.total === 1 ? 'tema encontrado' : 'temas encontrados' }}
+        @if (r.totalPaginas > 1) { · página {{ r.pagina }} de {{ r.totalPaginas }} }
+      </p>
+      @if (hayFiltros()) {
+        <button type="button" class="btn btn-sm btn-link" (click)="limpiar()"><i class="bi bi-x-circle me-1" aria-hidden="true"></i>Limpiar filtros</button>
+      }
+    </div>
+    <div class="tarjeta-panel overflow-hidden mb-4">
+      @for (t of r.elementos; track t.id) {
+        <app-fila-tema [tema]="t" [mostrarCategoria]="false" />
+      } @empty {
+        <div class="p-4 p-md-5 text-center">
+          <i class="bi bi-search fs-1 text-body-secondary" aria-hidden="true"></i>
+          <p class="mt-2 mb-0">{{ hayFiltros() ? 'Ningún tema coincide con tu búsqueda.' : 'Todavía no hay temas en esta categoría.' }}</p>
+        </div>
+      }
+    </div>
+    <app-paginacion [pagina]="r.pagina" [totalPaginas]="r.totalPaginas" etiqueta="Páginas de temas" (cambiar)="cambiarPagina($event)" />
+  </section>
+} @else {
+  <app-no-encontrado />
+}
