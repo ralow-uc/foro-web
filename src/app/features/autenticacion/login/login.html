@@ -1,0 +1,52 @@
+<app-panel-autenticacion titulo="Ingresar" subtitulo="Accede con tu correo y contraseña para participar en el foro.">
+  @if (volver()) {
+    <div class="alert alert-info small py-2" role="status">
+      <i class="bi bi-lock me-1" aria-hidden="true"></i>Inicia sesión para continuar a la página solicitada.
+    </div>
+  }
+  @if (error(); as mensaje) {
+    <div class="alert alert-danger d-flex gap-2 align-items-start" role="alert">
+      <i class="bi bi-x-octagon-fill" aria-hidden="true"></i><span>{{ mensaje }}</span>
+    </div>
+  }
+  <form [formGroup]="form" (ngSubmit)="enviar()" novalidate aria-label="Formulario de inicio de sesión">
+    <div class="mb-3">
+      <label for="login-correo" class="form-label">Correo electrónico</label>
+      <input id="login-correo" type="email" class="form-control" formControlName="correo" required maxlength="100"
+        autocomplete="email" placeholder="nombre@foro.cl" [class.is-invalid]="invalido(form.controls.correo)"
+        aria-describedby="login-correo-error" />
+      <app-campo-error [control]="form.controls.correo" idError="login-correo-error" />
+    </div>
+    <div class="mb-2">
+      <label for="login-contrasena" class="form-label">Contraseña</label>
+      <div class="input-group has-validation">
+        <input id="login-contrasena" [type]="verContrasena() ? 'text' : 'password'" class="form-control"
+          formControlName="contrasena" required maxlength="64" autocomplete="current-password"
+          [class.is-invalid]="invalido(form.controls.contrasena)" aria-describedby="login-contrasena-error" />
+        <button class="btn btn-outline-secondary" type="button" (click)="verContrasena.set(!verContrasena())"
+          [attr.aria-label]="verContrasena() ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+          <i class="bi" [class]="verContrasena() ? 'bi-eye-slash' : 'bi-eye'" aria-hidden="true"></i>
+        </button>
+      </div>
+      <app-campo-error [control]="form.controls.contrasena" idError="login-contrasena-error" />
+    </div>
+    <div class="text-end mb-4">
+      <a routerLink="/recuperar" class="small">¿Olvidaste tu contraseña?</a>
+    </div>
+    <button type="submit" class="btn btn-primary btn-lg w-100 btn-sticker">
+      <i class="bi bi-box-arrow-in-right me-2" aria-hidden="true"></i>Ingresar
+    </button>
+  </form>
+  <p class="text-center mt-4 mb-0">¿No tienes cuenta? <a routerLink="/registro" class="fw-bold">Regístrate gratis</a></p>
+
+  <div class="mt-4 pt-3 border-top">
+    <p class="small fw-bold mb-2"><i class="bi bi-magic me-1" aria-hidden="true"></i>Cuentas de demostración (contraseña <code>Cubo12345*</code>)</p>
+    <div class="d-flex flex-wrap gap-2">
+      @for (cuenta of cuentasDemo; track cuenta.correo) {
+        <button type="button" class="btn btn-sm btn-outline-dark" (click)="usarCuenta(cuenta.correo)">
+          {{ cuenta.correo }} <span class="badge text-bg-light border ms-1">{{ cuenta.rol }}</span>
+        </button>
+      }
+    </div>
+  </div>
+</app-panel-autenticacion>

@@ -1,0 +1,83 @@
+<app-panel-autenticacion titulo="Crear cuenta" subtitulo="Regístrate para publicar temas, comentar y reportar contenido."
+  lema="Tu primer sub-20 empieza aquí." detalle="Crea tu perfil, elige tu método favorito y comparte tus avances con la comunidad.">
+  @if (error(); as mensaje) {
+    <div class="alert alert-danger" role="alert"><i class="bi bi-x-octagon-fill me-2" aria-hidden="true"></i>{{ mensaje }}</div>
+  }
+  <form [formGroup]="form" (ngSubmit)="enviar()" novalidate aria-label="Formulario de registro">
+    <div class="row g-3">
+      <div class="col-12 col-md-6">
+        <label for="reg-usuario" class="form-label">Nombre de usuario</label>
+        <div class="input-group has-validation">
+          <span class="input-group-text">&#64;</span>
+          <input id="reg-usuario" type="text" class="form-control" formControlName="nombreUsuario" required minlength="3"
+            maxlength="30" [pattern]="patronUsuario" autocomplete="username" placeholder="cubero_99"
+            [class.is-invalid]="invalido(form.controls.nombreUsuario)" aria-describedby="reg-usuario-ayuda reg-usuario-error" />
+        </div>
+        <div id="reg-usuario-ayuda" class="form-text">3 a 30 caracteres: letras, números, punto, guion o guion bajo.</div>
+        <app-campo-error [control]="form.controls.nombreUsuario" idError="reg-usuario-error"
+          [mensajes]="{ pattern: 'Solo se permiten letras sin tilde, números, punto (.), guion (-) y guion bajo (_).' }" />
+      </div>
+      <div class="col-12 col-md-6">
+        <label for="reg-correo" class="form-label">Correo electrónico</label>
+        <input id="reg-correo" type="email" class="form-control" formControlName="correo" required maxlength="100"
+          autocomplete="email" placeholder="nombre@dominio.cl" [class.is-invalid]="invalido(form.controls.correo)"
+          aria-describedby="reg-correo-error" />
+        <app-campo-error [control]="form.controls.correo" idError="reg-correo-error" />
+      </div>
+
+      <div class="col-12 col-md-6">
+        <label for="reg-contrasena" class="form-label">Contraseña</label>
+        <div class="input-group has-validation">
+          <input id="reg-contrasena" [type]="verContrasena() ? 'text' : 'password'" class="form-control"
+            formControlName="contrasena" required minlength="8" [maxlength]="maxContrasena" [pattern]="patronContrasena"
+            autocomplete="new-password" [class.is-invalid]="invalido(form.controls.contrasena)"
+            aria-describedby="reg-contrasena-error" />
+          <button class="btn btn-outline-secondary" type="button" (click)="verContrasena.set(!verContrasena())"
+            [attr.aria-label]="verContrasena() ? 'Ocultar contraseña' : 'Mostrar contraseña'">
+            <i class="bi" [class]="verContrasena() ? 'bi-eye-slash' : 'bi-eye'" aria-hidden="true"></i>
+          </button>
+        </div>
+        <app-campo-error [control]="form.controls.contrasena" idError="reg-contrasena-error"
+          [mensajes]="{ pattern: 'La contraseña no cumple los requisitos de seguridad.' }" />
+      </div>
+      <div class="col-12 col-md-6">
+        <label for="reg-confirmacion" class="form-label">Confirmar contraseña</label>
+        <input id="reg-confirmacion" [type]="verContrasena() ? 'text' : 'password'" class="form-control"
+          formControlName="confirmacion" required [maxlength]="maxContrasena" autocomplete="new-password"
+          [class.is-invalid]="invalido(form.controls.confirmacion)" aria-describedby="reg-confirmacion-error" />
+        <app-campo-error [control]="form.controls.confirmacion" idError="reg-confirmacion-error" />
+      </div>
+      <div class="col-12">
+        <app-requisitos-contrasena [control]="form.controls.contrasena" [nombreUsuario]="form.controls.nombreUsuario.value" />
+      </div>
+
+      <div class="col-12 col-md-6">
+        <label for="reg-nacimiento" class="form-label">Fecha de nacimiento <span class="fw-normal text-body-secondary">(opcional)</span></label>
+        <input id="reg-nacimiento" type="date" class="form-control" formControlName="fechaNacimiento" min="1900-01-01"
+          [max]="fechaMaxima" [class.is-invalid]="invalido(form.controls.fechaNacimiento)"
+          aria-describedby="reg-nacimiento-ayuda reg-nacimiento-error" />
+        <div id="reg-nacimiento-ayuda" class="form-text">Si la indicas, debes tener al menos 13 años.</div>
+        <app-campo-error [control]="form.controls.fechaNacimiento" idError="reg-nacimiento-error"
+          [mensajes]="{ max: 'Debes tener al menos 13 años.' }" />
+      </div>
+
+      <div class="col-12">
+        <div class="form-check">
+          <input id="reg-normas" type="checkbox" class="form-check-input" formControlName="aceptaNormas" required
+            [class.is-invalid]="invalido(form.controls.aceptaNormas)" aria-describedby="reg-normas-error" />
+          <label for="reg-normas" class="form-check-label">
+            Leí y acepto las <a routerLink="/normas" target="_blank">normas del foro</a>.
+          </label>
+          <app-campo-error [control]="form.controls.aceptaNormas" idError="reg-normas-error"
+            [mensajes]="{ required: 'Debes aceptar las normas para registrarte.' }" />
+        </div>
+      </div>
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary btn-lg w-100 btn-sticker">
+          <i class="bi bi-person-plus me-2" aria-hidden="true"></i>Crear mi cuenta
+        </button>
+      </div>
+    </div>
+  </form>
+  <p class="text-center mt-4 mb-0">¿Ya tienes cuenta? <a routerLink="/login" class="fw-bold">Ingresa aquí</a></p>
+</app-panel-autenticacion>

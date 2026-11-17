@@ -1,0 +1,91 @@
+<app-panel-autenticacion titulo="Recuperar contraseña" subtitulo="Te enviaremos un código de verificación de 6 dígitos a tu correo."
+  lema="¿Olvidaste el algoritmo? Pasa." detalle="Recupera el acceso a tu cuenta en dos pasos. Esta versión simula el envío del correo.">
+  <ol class="pasos list-unstyled d-flex gap-2 mb-4" aria-label="Progreso">
+    @for (n of [1, 2, 3]; track n) {
+      <li class="flex-fill" [class.activo]="paso() >= n" [attr.aria-current]="paso() === n ? 'step' : null">
+        <span class="visually-hidden">Paso {{ n }}</span>
+      </li>
+    }
+  </ol>
+
+  @switch (paso()) {
+    @case (1) {
+      <form [formGroup]="formCorreo" (ngSubmit)="solicitarCodigo()" novalidate aria-label="Paso 1: correo">
+        <p class="fw-bold mb-3">Paso 1 de 3 · Ingresa el correo de tu cuenta</p>
+        <div class="mb-4">
+          <label for="rec-correo" class="form-label">Correo electrónico</label>
+          <input id="rec-correo" type="email" class="form-control" formControlName="correo" required maxlength="100"
+            autocomplete="email" placeholder="nombre@foro.cl" [class.is-invalid]="invalido(formCorreo.controls.correo)"
+            aria-describedby="rec-correo-error" />
+          <app-campo-error [control]="formCorreo.controls.correo" idError="rec-correo-error" />
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg w-100 btn-sticker">
+          <i class="bi bi-envelope-paper me-2" aria-hidden="true"></i>Enviar código
+        </button>
+      </form>
+    }
+    @case (2) {
+      @if (codigoSimulado(); as codigo) {
+        <div class="alert alert-info d-flex gap-2" role="status">
+          <i class="bi bi-envelope-open fs-5" aria-hidden="true"></i>
+          <div>
+            <strong>Correo simulado enviado a {{ correoConfirmado() }}.</strong><br />
+            Tu código es <span class="codigo">{{ codigo }}</span>. Vence en {{ minutosValidez }} minutos.
+          </div>
+        </div>
+      }
+      @if (error(); as mensaje) {
+        <div class="alert alert-danger" role="alert">{{ mensaje }}</div>
+      }
+      <form [formGroup]="formNueva" (ngSubmit)="restablecer()" novalidate aria-label="Paso 2: código y nueva contraseña">
+        <p class="fw-bold mb-3">Paso 2 de 3 · Código y nueva contraseña</p>
+        <div class="mb-3">
+          <label for="rec-codigo" class="form-label">Código de verificación</label>
+          <input id="rec-codigo" type="text" inputmode="numeric" class="form-control codigo-input" formControlName="codigo"
+            required minlength="6" maxlength="6" pattern="\d{6}" autocomplete="one-time-code" placeholder="000000"
+            [class.is-invalid]="invalido(formNueva.controls.codigo)" aria-describedby="rec-codigo-error" />
+          <app-campo-error [control]="formNueva.controls.codigo" idError="rec-codigo-error"
+            [mensajes]="{ pattern: 'El código debe tener exactamente 6 dígitos.' }" />
+        </div>
+        <div class="row g-3">
+          <div class="col-12 col-md-6">
+            <label for="rec-contrasena" class="form-label">Nueva contraseña</label>
+            <input id="rec-contrasena" type="password" class="form-control" formControlName="contrasena" required minlength="8"
+              [maxlength]="maxContrasena" [pattern]="patronContrasena" autocomplete="new-password"
+              [class.is-invalid]="invalido(formNueva.controls.contrasena)" aria-describedby="rec-contrasena-error" />
+            <app-campo-error [control]="formNueva.controls.contrasena" idError="rec-contrasena-error"
+              [mensajes]="{ pattern: 'La contraseña no cumple los requisitos de seguridad.' }" />
+          </div>
+          <div class="col-12 col-md-6">
+            <label for="rec-confirmacion" class="form-label">Confirmar contraseña</label>
+            <input id="rec-confirmacion" type="password" class="form-control" formControlName="confirmacion" required
+              [maxlength]="maxContrasena" autocomplete="new-password"
+              [class.is-invalid]="invalido(formNueva.controls.confirmacion)" aria-describedby="rec-confirmacion-error" />
+            <app-campo-error [control]="formNueva.controls.confirmacion" idError="rec-confirmacion-error" />
+          </div>
+        </div>
+        <app-requisitos-contrasena [control]="formNueva.controls.contrasena" [nombreUsuario]="nombreUsuarioActual()" />
+        <div class="d-flex flex-column flex-sm-row gap-2 mt-4">
+          <button type="submit" class="btn btn-primary btn-lg flex-fill btn-sticker">
+            <i class="bi bi-key me-2" aria-hidden="true"></i>Cambiar contraseña
+          </button>
+        </div>
+        <div class="d-flex justify-content-between mt-3 small">
+          <button type="button" class="btn btn-link p-0" (click)="volverAlPaso1()">Usar otro correo</button>
+          <button type="button" class="btn btn-link p-0" (click)="reenviar()">Reenviar código</button>
+        </div>
+      </form>
+    }
+    @case (3) {
+      <div class="text-center py-3">
+        <div class="exito-icono mx-auto mb-3"><i class="bi bi-check-lg" aria-hidden="true"></i></div>
+        <h2 class="h4">¡Contraseña actualizada!</h2>
+        <p class="text-body-secondary">Ya puedes ingresar con tu nueva contraseña.</p>
+        <a routerLink="/login" class="btn btn-primary btn-lg btn-sticker">Ir a ingresar</a>
+      </div>
+    }
+  }
+  @if (paso() !== 3) {
+    <p class="text-center mt-4 mb-0"><a routerLink="/login"><i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Volver a ingresar</a></p>
+  }
+</app-panel-autenticacion>
