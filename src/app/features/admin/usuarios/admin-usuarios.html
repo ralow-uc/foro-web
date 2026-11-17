@@ -112,7 +112,7 @@
             <div class="d-flex justify-content-between align-items-center mt-3">
               <div class="form-check form-switch mb-0">
                 <input class="form-check-input" type="checkbox" role="switch" [id]="'activo-m-' + u.id" [checked]="u.activo" (change)="alternarActivo(u, $event)" />
-                <label class="form-check-label small" [for]="'activo-m-' + u.id">{{ u.activo ? 'Activa' : 'Inactiva' }} · {{ u.cantidadTemas }} temas</label>
+                <label class="form-check-label small" [for]="'activo-m-' + u.id">{{ u.activo ? 'Activa' : 'Inactiva' }} · {{ u.cantidadTemas }} {{ u.cantidadTemas === 1 ? 'tema' : 'temas' }}</label>
               </div>
               <button type="button" class="btn btn-sm btn-outline-danger" (click)="eliminar(u)" [disabled]="u.esYo">Eliminar</button>
             </div>
