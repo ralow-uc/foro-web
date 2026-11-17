@@ -133,9 +133,9 @@ biografía ≤ 280 con contador, motivo de baneo 10–400, código de norma `N1`
 
 | Tamaño | Ancho | Clases usadas |
 |---|---|---|
-| **Móvil** | < 576 px (probado en 375) | `col-12`, `col-6` (resúmenes), navbar colapsada, tablas convertidas en tarjetas (`d-md-none`, `d-lg-none`), modales a pantalla completa (`modal-fullscreen-sm-down`) |
+| **Móvil** | < 576 px (probado en 375) | `col-12`, `col-6` (resúmenes), navbar colapsada (también en tablet), tablas convertidas en tarjetas (`d-md-none`, `d-lg-none`), modales a pantalla completa (`modal-fullscreen-sm-down`) |
 | **Tablet** | ≥ 768 px (`md`) | `col-sm-6` / `col-md-6` (categorías, tarjetas y formularios en dos columnas), `col-md-3` (resúmenes), tablas desde `d-md-block` en *Mis temas* |
-| **Escritorio** | ≥ 992 px (`lg`) y ≥ 1200 px (`xl`) | `col-lg-4` (grilla de categorías), `col-lg-8` + `col-lg-4` (contenido + barra lateral), `col-lg-5` / `col-lg-7` (formulario + listado en administración), `col-xl-6`, tablas `d-lg-block` en moderación y usuarios, navbar expandida (`navbar-expand-lg`) |
+| **Escritorio** | ≥ 992 px (`lg`) y ≥ 1200 px (`xl`) | `col-lg-4` (grilla de categorías), `col-lg-8` + `col-lg-4` (contenido + barra lateral), `col-lg-5` / `col-lg-7` (formulario + listado en administración), `col-xl-6`, tablas `d-lg-block` en moderación y usuarios, navbar expandida desde 1200 px (`navbar-expand-xl`; con el rol ADMIN la barra tiene 5 enlaces y bajo ese ancho se usa el menú colapsable) |
 
 Capturas en los tres tamaños: [`docs/capturas/`](docs/capturas).
 

@@ -1,5 +1,7 @@
-Recorrido en Chrome (headless) contra la imagen Docker foro-web:local, 2026-11-17 18:31.
+Recorrido en Chrome (headless) contra la imagen Docker de foro-web, 2026-11-17 19:06.
 Anchos: 375 px (móvil), 768 px (tablet), 1280 px (escritorio). Sin desbordes horizontales.
+Barra de navegación verificada además en 1024, 1199, 1200, 1366, 1399, 1440 y 1920 px con el rol ADMIN:
+una sola fila, sin textos partidos.
 
 OK   inicio muestra 12 enlaces a categorías
 OK   visitante: tema baneado oculto (no disponible)
