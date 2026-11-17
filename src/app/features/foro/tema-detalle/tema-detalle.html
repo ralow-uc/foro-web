@@ -1,0 +1,163 @@
+@if (tema(); as t) {
+  <div class="container py-4">
+    <nav aria-label="Ruta de navegación">
+      <ol class="breadcrumb small mb-3">
+        <li class="breadcrumb-item"><a routerLink="/">Inicio</a></li>
+        @if (t.categoria) {
+          <li class="breadcrumb-item"><a [routerLink]="['/categorias', t.categoria.slug]">{{ t.categoria.nombre }}</a></li>
+        }
+        <li class="breadcrumb-item active text-truncate" aria-current="page" style="max-width: 18rem">{{ t.titulo }}</li>
+      </ol>
+    </nav>
+
+    <div class="row g-4">
+      <div class="col-12 col-lg-8">
+        <article class="card tema" [class.contenido-baneado]="t.sancion" aria-labelledby="titulo-tema">
+          <div class="card-body p-3 p-md-4">
+            <div class="d-flex flex-wrap gap-1 mb-2">
+              @if (t.categoria) {
+                <a class="badge text-bg-light border text-decoration-none" [routerLink]="['/categorias', t.categoria.slug]">{{ t.categoria.nombre }}</a>
+              }
+              @if (t.cerrado) {
+                <span class="badge text-bg-secondary"><i class="bi bi-lock-fill me-1" aria-hidden="true"></i>Cerrado</span>
+              }
+            </div>
+            <h1 id="titulo-tema" class="h3 mb-3 text-break">{{ t.titulo }}</h1>
+            @if (t.sancion) {
+              <app-aviso-baneo class="d-block mb-3" [sancion]="t.sancion" />
+            }
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <app-avatar [nombre]="t.autor.nombreVisible" [color]="t.autor.colorAvatar" [tamano]="40" />
+              <div class="small lh-sm">
+                <div class="fw-bold">{{ t.autor.nombreVisible }} <span class="text-body-secondary fw-normal">&#64;{{ t.autor.nombreUsuario }}</span></div>
+                <div class="text-body-secondary">
+                  Publicado {{ t.fechaCreacion | tiempoRelativo }} · {{ t.fechaCreacion | date: "d 'de' MMMM y, HH:mm" }}
+                  @if (t.fechaActualizacion) { · editado {{ t.fechaActualizacion | tiempoRelativo }} }
+                </div>
+              </div>
+            </div>
+            <div class="contenido-tema">{{ t.contenido }}</div>
+          </div>
+          @if (foro.puedeEditarTema(t) || foro.puedeEliminarTema(t)) {
+            <div class="card-footer bg-transparent d-flex flex-wrap gap-2 acciones">
+              @if (foro.puedeEditarTema(t)) {
+                <a class="btn btn-outline-dark" [routerLink]="['/temas', t.id, 'editar']"><i class="bi bi-pencil me-1" aria-hidden="true"></i>Editar</a>
+              }
+              @if (foro.puedeEliminarTema(t)) {
+                <button type="button" class="btn btn-outline-danger" (click)="eliminarTema()"><i class="bi bi-trash me-1" aria-hidden="true"></i>Eliminar</button>
+              }
+            </div>
+          }
+        </article>
+
+        <section class="mt-4" aria-labelledby="titulo-comentarios">
+          <h2 id="titulo-comentarios" class="h5 mb-3">
+            <i class="bi bi-chat-left-text me-2" aria-hidden="true"></i>{{ comentarios().length }} {{ comentarios().length === 1 ? 'comentario' : 'comentarios' }}
+          </h2>
+          <ol class="list-unstyled d-grid gap-3 mb-4">
+            @for (c of comentarios(); track c.id) {
+              <li class="comentario p-3" [class.propio]="foro.esAutor(c)" [class.contenido-baneado]="c.sancion" [id]="'comentario-' + c.id">
+                <div class="d-flex gap-2 gap-md-3">
+                  <app-avatar [nombre]="c.autor.nombreVisible" [color]="c.autor.colorAvatar" [tamano]="36" />
+                  <div class="flex-grow-1 min-w-0">
+                    <div class="d-flex flex-wrap justify-content-between gap-1 small mb-1">
+                      <span><strong>&#64;{{ c.autor.nombreUsuario }}</strong>
+                        @if (c.autorId === t.autorId) { <span class="badge text-bg-light border ms-1">Autor</span> }
+                      </span>
+                      <span class="text-body-secondary" [title]="c.fechaCreacion | date: 'medium'">
+                        {{ c.fechaCreacion | tiempoRelativo }}@if (c.fechaActualizacion) { · editado }
+                      </span>
+                    </div>
+                    @if (c.sancion) {
+                      <app-aviso-baneo class="d-block mb-2" [sancion]="c.sancion" [compacto]="true" />
+                    }
+                    @if (editandoId() === c.id) {
+                      <form [formGroup]="formEdicion" (ngSubmit)="guardarEdicion(c.id)" novalidate aria-label="Editar comentario">
+                        <label [for]="'editar-' + c.id" class="visually-hidden">Editar comentario</label>
+                        <textarea [id]="'editar-' + c.id" class="form-control" rows="3" formControlName="contenido" required
+                          [minlength]="limites.min" [maxlength]="limites.max" (input)="largoEdicion.set(formEdicion.controls.contenido.value.length)"
+                          [class.is-invalid]="invalido(formEdicion.controls.contenido)" [attr.aria-describedby]="'editar-error-' + c.id"></textarea>
+                        <div class="d-flex justify-content-between align-items-start gap-2 mt-1">
+                          <app-campo-error [control]="formEdicion.controls.contenido" [idError]="'editar-error-' + c.id" />
+                          <small class="contador text-body-secondary ms-auto">{{ largoEdicion() }}/{{ limites.max }}</small>
+                        </div>
+                        <div class="d-flex gap-2 mt-2">
+                          <button type="submit" class="btn btn-sm btn-primary">Guardar</button>
+                          <button type="button" class="btn btn-sm btn-outline-secondary" (click)="cancelarEdicion()">Cancelar</button>
+                        </div>
+                      </form>
+                    } @else {
+                      <p class="mb-0 contenido-tema">{{ c.contenido }}</p>
+                      <div class="d-flex flex-wrap gap-1 mt-2 acciones">
+                        @if (foro.puedeEditarComentario(c)) {
+                          <button type="button" class="btn btn-sm btn-outline-dark" (click)="iniciarEdicion(c)"><i class="bi bi-pencil me-1" aria-hidden="true"></i>Editar</button>
+                        }
+                        @if (foro.puedeEliminarComentario(c)) {
+                          <button type="button" class="btn btn-sm btn-outline-danger" (click)="eliminarComentario(c)"><i class="bi bi-trash me-1" aria-hidden="true"></i>Eliminar</button>
+                        }
+                      </div>
+                    }
+                  </div>
+                </div>
+              </li>
+            } @empty {
+              <li class="text-body-secondary">Aún no hay comentarios. ¡Sé el primero en responder!</li>
+            }
+          </ol>
+
+          @if (foro.puedeComentar(t)) {
+            <form [formGroup]="formComentario" (ngSubmit)="comentar()" class="tarjeta-panel p-3 p-md-4" novalidate aria-label="Agregar comentario">
+              <label for="nuevo-comentario" class="form-label">Tu comentario</label>
+              <textarea id="nuevo-comentario" class="form-control" rows="4" formControlName="contenido" required
+                [minlength]="limites.min" [maxlength]="limites.max" placeholder="Comparte tu experiencia o responde una duda…"
+                (input)="largoComentario.set(formComentario.controls.contenido.value.length)"
+                [class.is-invalid]="invalido(formComentario.controls.contenido)" aria-describedby="nuevo-comentario-error"></textarea>
+              <div class="d-flex justify-content-between align-items-start gap-2 mt-1">
+                <app-campo-error [control]="formComentario.controls.contenido" idError="nuevo-comentario-error" />
+                <small class="contador text-body-secondary ms-auto">{{ largoComentario() }}/{{ limites.max }}</small>
+              </div>
+              <button type="submit" class="btn btn-primary btn-sticker mt-2"><i class="bi bi-send me-1" aria-hidden="true"></i>Comentar</button>
+            </form>
+          } @else if (t.cerrado) {
+            <div class="alert alert-secondary d-flex gap-2" role="status">
+              <i class="bi bi-lock-fill" aria-hidden="true"></i>Este tema está cerrado por moderación y no admite nuevos comentarios.
+            </div>
+          } @else if (!auth.estaAutenticado()) {
+            <div class="alert alert-info d-flex flex-wrap align-items-center gap-2" role="status">
+              <i class="bi bi-chat-dots" aria-hidden="true"></i>
+              <span>Para comentar necesitas una cuenta.</span>
+              <a class="btn btn-sm btn-primary ms-sm-auto" routerLink="/login" [queryParams]="{ volver: '/temas/' + t.id }">Ingresar</a>
+            </div>
+          }
+        </section>
+      </div>
+
+      <aside class="col-12 col-lg-4">
+        <div class="tarjeta-panel p-3 p-md-4 mb-3">
+          <h2 class="h6 text-uppercase small text-body-secondary">Sobre el autor</h2>
+          <div class="d-flex align-items-center gap-2">
+            <app-avatar [nombre]="t.autor.nombreVisible" [color]="t.autor.colorAvatar" [tamano]="48" />
+            <div>
+              <div class="fw-bold">{{ t.autor.nombreVisible }}</div>
+              <div class="small text-body-secondary">&#64;{{ t.autor.nombreUsuario }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="tarjeta-panel p-3 p-md-4">
+          <h2 class="h6 text-uppercase small text-body-secondary">Recuerda</h2>
+          <p class="small mb-2">Si un contenido incumple las normas, repórtalo citando la norma correspondiente.</p>
+          <a routerLink="/normas" class="small fw-bold">Leer las normas del foro</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+} @else if (ocultoPorModeracion()) {
+  <section class="container py-5 text-center">
+    <i class="bi bi-shield-exclamation display-3 text-danger" aria-hidden="true"></i>
+    <h1 class="h3 mt-3">Este tema no está disponible</h1>
+    <p class="text-body-secondary">Fue retirado por el equipo de moderación por incumplir las normas del foro.</p>
+    <a routerLink="/" class="btn btn-primary btn-sticker">Volver al inicio</a>
+  </section>
+} @else {
+  <app-no-encontrado />
+}

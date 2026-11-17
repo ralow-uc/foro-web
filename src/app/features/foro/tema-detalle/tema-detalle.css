@@ -1,0 +1,5 @@
+.tema { border: 2px solid var(--cc-tinta); box-shadow: var(--cc-sombra); }
+.comentario { background: var(--cc-blanco); border: 1.5px solid var(--cc-borde); border-radius: var(--bs-border-radius-lg); }
+.comentario.propio { border-color: #f2b69e; }
+.contador { font-variant-numeric: tabular-nums; }
+.acciones .btn { --bs-btn-padding-y: 0.2rem; --bs-btn-padding-x: 0.55rem; --bs-btn-font-size: 0.82rem; }
