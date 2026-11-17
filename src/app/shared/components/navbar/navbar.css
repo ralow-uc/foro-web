@@ -11,3 +11,10 @@
 .dropdown-menu { min-width: 15rem; }
 .navbar-toggler { border: 2px solid rgba(255, 255, 255, 0.4); }
 .navbar-toggler:focus { box-shadow: 0 0 0 0.2rem rgba(255, 122, 61, 0.5); }
+.btn-usuario {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  max-width: 100%;
+}
+.btn-usuario:hover, .btn-usuario.show { background: rgba(255, 255, 255, 0.16); color: #fff; }
