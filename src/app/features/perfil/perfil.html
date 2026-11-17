@@ -1,0 +1,152 @@
+@if (usuario(); as u) {
+  <section class="container py-4 py-md-5">
+    <h1 class="h2 mb-4">Mi perfil</h1>
+    <div class="row g-4">
+      <!-- Resumen: arriba en móvil/tablet, columna lateral en escritorio -->
+      <aside class="col-12 col-lg-4 order-lg-2">
+        <div class="tarjeta-panel p-3 p-md-4 text-center">
+          <app-avatar class="d-inline-block" [nombre]="vistaPrevia().nombre || u.nombreUsuario" [color]="vistaPrevia().color" [tamano]="88" />
+          <h2 class="h5 mt-3 mb-0 text-break">{{ vistaPrevia().nombre || u.nombreUsuario }}</h2>
+          <p class="small text-body-secondary mb-2">&#64;{{ u.nombreUsuario }}</p>
+          <div class="d-flex flex-wrap justify-content-center gap-1 mb-3">
+            @for (rol of u.roles; track rol) {
+              <app-badge-rol [rol]="rol" />
+            }
+          </div>
+          <dl class="row small text-start mb-0">
+            <dt class="col-6">Miembro desde</dt>
+            <dd class="col-6 text-end">{{ u.fechaCreacion | date: 'MMM y' }}</dd>
+            <dt class="col-6">Temas publicados</dt>
+            <dd class="col-6 text-end"><a routerLink="/mis-temas">{{ cantidadTemas() }}</a></dd>
+            <dt class="col-6">Método</dt>
+            <dd class="col-6 text-end mb-0">{{ u.metodoPrincipal }}</dd>
+          </dl>
+        </div>
+      </aside>
+
+      <div class="col-12 col-lg-8 order-lg-1 d-grid gap-4">
+        <!-- Datos del perfil -->
+        <form class="tarjeta-panel p-3 p-md-4" [formGroup]="formPerfil" (ngSubmit)="guardarPerfil()" novalidate aria-labelledby="titulo-datos">
+          <h2 id="titulo-datos" class="h5 mb-3"><i class="bi bi-person-gear me-2" aria-hidden="true"></i>Datos del perfil</h2>
+          <div class="row g-3">
+            <div class="col-12 col-md-6">
+              <label for="perfil-correo" class="form-label">Correo electrónico</label>
+              <input id="perfil-correo" type="email" class="form-control" formControlName="correo" required maxlength="100"
+                autocomplete="email" [class.is-invalid]="invalido(formPerfil.controls.correo)" aria-describedby="perfil-correo-error" />
+              <app-campo-error [control]="formPerfil.controls.correo" idError="perfil-correo-error" />
+            </div>
+            <div class="col-12 col-md-6">
+              <label for="perfil-nombre" class="form-label">Nombre visible</label>
+              <input id="perfil-nombre" type="text" class="form-control" formControlName="nombreVisible" required
+                [minlength]="limites.nombreMin" [maxlength]="limites.nombreMax" autocomplete="nickname"
+                [class.is-invalid]="invalido(formPerfil.controls.nombreVisible)" aria-describedby="perfil-nombre-error" />
+              <app-campo-error [control]="formPerfil.controls.nombreVisible" idError="perfil-nombre-error" />
+            </div>
+            <div class="col-12">
+              <label for="perfil-bio" class="form-label">Biografía <span class="text-body-secondary small">(opcional)</span></label>
+              <textarea id="perfil-bio" class="form-control" rows="3" formControlName="biografia" [maxlength]="limites.biografiaMax"
+                placeholder="Cuéntale a la comunidad cómo empezaste a resolver cubos…"
+                [class.is-invalid]="invalido(formPerfil.controls.biografia)" aria-describedby="perfil-bio-error perfil-bio-contador"></textarea>
+              <div class="d-flex justify-content-between gap-2 mt-1">
+                <app-campo-error [control]="formPerfil.controls.biografia" idError="perfil-bio-error" />
+                <small id="perfil-bio-contador" class="ms-auto" [class.text-danger]="largoBiografia() > limites.biografiaMax - 20"
+                  [class.text-body-secondary]="largoBiografia() <= limites.biografiaMax - 20">
+                  {{ largoBiografia() }}/{{ limites.biografiaMax }}
+                </small>
+              </div>
+            </div>
+            <div class="col-12 col-md-6 col-xl-4">
+              <label for="perfil-ciudad" class="form-label">Ciudad</label>
+              <input id="perfil-ciudad" type="text" class="form-control" formControlName="ciudad" [maxlength]="limites.ciudadMax"
+                [pattern]="patronCiudad" autocomplete="address-level2" placeholder="Santiago"
+                [class.is-invalid]="invalido(formPerfil.controls.ciudad)" aria-describedby="perfil-ciudad-error" />
+              <app-campo-error [control]="formPerfil.controls.ciudad" idError="perfil-ciudad-error"
+                [mensajes]="{ pattern: 'Usa solo letras, espacios y guiones.' }" />
+            </div>
+            <div class="col-12 col-md-6 col-xl-4">
+              <label for="perfil-cubo" class="form-label">Cubo favorito</label>
+              <input id="perfil-cubo" type="text" class="form-control" formControlName="cuboFavorito" [maxlength]="limites.cuboMax"
+                placeholder="GAN 14 MagLev" [class.is-invalid]="invalido(formPerfil.controls.cuboFavorito)" aria-describedby="perfil-cubo-error" />
+              <app-campo-error [control]="formPerfil.controls.cuboFavorito" idError="perfil-cubo-error" />
+            </div>
+            <div class="col-12 col-xl-4">
+              <label for="perfil-metodo" class="form-label">Método principal</label>
+              <select id="perfil-metodo" class="form-select" formControlName="metodoPrincipal" required
+                [class.is-invalid]="invalido(formPerfil.controls.metodoPrincipal)">
+                @for (m of metodos; track m) {
+                  <option [value]="m">{{ m }}</option>
+                }
+              </select>
+            </div>
+            <div class="col-12">
+              <fieldset>
+                <legend class="form-label fs-6">Color del avatar</legend>
+                <div class="d-flex flex-wrap gap-2">
+                  @for (c of colores; track c.valor) {
+                    <div>
+                      <input class="btn-check" type="radio" [id]="'color-' + c.valor" formControlName="colorAvatar" [value]="c.valor" required />
+                      <label class="btn btn-outline-dark btn-sm d-flex align-items-center gap-2" [for]="'color-' + c.valor">
+                        <span class="d-inline-block rounded-circle border" style="width: 1rem; height: 1rem" [style.background]="c.valor" aria-hidden="true"></span>
+                        {{ c.nombre }}
+                      </label>
+                    </div>
+                  }
+                </div>
+              </fieldset>
+            </div>
+          </div>
+          @if (errorPerfil(); as e) {
+            <div class="alert alert-danger mt-3 mb-0" role="alert">{{ e }}</div>
+          }
+          <div class="d-flex flex-column flex-sm-row gap-2 mt-4">
+            <button type="submit" class="btn btn-primary btn-sticker"><i class="bi bi-check2 me-1" aria-hidden="true"></i>Guardar cambios</button>
+            <button type="button" class="btn btn-outline-secondary" (click)="restablecer()" [disabled]="formPerfil.pristine">Descartar cambios</button>
+          </div>
+        </form>
+
+        <!-- Cambio de contraseña -->
+        <form class="tarjeta-panel p-3 p-md-4" [formGroup]="formContrasena" (ngSubmit)="cambiarContrasena()" novalidate aria-labelledby="titulo-contrasena">
+          <div class="d-flex justify-content-between align-items-center gap-2 mb-3">
+            <h2 id="titulo-contrasena" class="h5 mb-0"><i class="bi bi-key me-2" aria-hidden="true"></i>Cambiar contraseña</h2>
+            <div class="form-check form-switch mb-0">
+              <input class="form-check-input" type="checkbox" role="switch" id="ver-contrasenas" [checked]="verContrasenas()"
+                (change)="verContrasenas.set(!verContrasenas())" />
+              <label class="form-check-label small" for="ver-contrasenas">Mostrar</label>
+            </div>
+          </div>
+          <div class="row g-3">
+            <div class="col-12 col-md-4">
+              <label for="pass-actual" class="form-label">Contraseña actual</label>
+              <input id="pass-actual" [type]="verContrasenas() ? 'text' : 'password'" class="form-control" formControlName="actual"
+                required [maxlength]="maxContrasena" autocomplete="current-password"
+                [class.is-invalid]="invalido(formContrasena.controls.actual)" aria-describedby="pass-actual-error" />
+              <app-campo-error [control]="formContrasena.controls.actual" idError="pass-actual-error" />
+            </div>
+            <div class="col-12 col-md-4">
+              <label for="pass-nueva" class="form-label">Nueva contraseña</label>
+              <input id="pass-nueva" [type]="verContrasenas() ? 'text' : 'password'" class="form-control" formControlName="nueva"
+                required minlength="8" [maxlength]="maxContrasena" [pattern]="patronContrasena" autocomplete="new-password"
+                [class.is-invalid]="invalido(formContrasena.controls.nueva)" aria-describedby="pass-nueva-error" />
+              <app-campo-error [control]="formContrasena.controls.nueva" idError="pass-nueva-error"
+                [mensajes]="{ pattern: 'La contraseña no cumple los requisitos de seguridad.' }" />
+            </div>
+            <div class="col-12 col-md-4">
+              <label for="pass-confirmacion" class="form-label">Confirmar nueva</label>
+              <input id="pass-confirmacion" [type]="verContrasenas() ? 'text' : 'password'" class="form-control" formControlName="confirmacion"
+                required [maxlength]="maxContrasena" autocomplete="new-password"
+                [class.is-invalid]="invalido(formContrasena.controls.confirmacion)" aria-describedby="pass-confirmacion-error" />
+              <app-campo-error [control]="formContrasena.controls.confirmacion" idError="pass-confirmacion-error" />
+            </div>
+            <div class="col-12">
+              <app-requisitos-contrasena [control]="formContrasena.controls.nueva" [nombreUsuario]="u.nombreUsuario" />
+            </div>
+          </div>
+          @if (errorContrasena(); as e) {
+            <div class="alert alert-danger mt-3 mb-0" role="alert">{{ e }}</div>
+          }
+          <button type="submit" class="btn btn-dark mt-3"><i class="bi bi-shield-lock me-1" aria-hidden="true"></i>Actualizar contraseña</button>
+        </form>
+      </div>
+    </div>
+  </section>
+}
