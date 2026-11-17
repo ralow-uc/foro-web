@@ -143,9 +143,12 @@ export interface Fortaleza {
 /** Calcula la fortaleza de una contraseña según las reglas cumplidas y su largo. */
 export function calcularFortaleza(valor: string, usuario?: string | null): Fortaleza {
   if (!valor) return { nivel: 0, etiqueta: 'Sin contraseña', porcentaje: 0, clase: 'bg-secondary' };
-  const cumplidas = REGLAS_CONTRASENA.filter((r) => r.cumple(valor, usuario)).length;
-  const total = REGLAS_CONTRASENA.length;
-  let nivel = cumplidas <= 3 ? 1 : cumplidas < total ? 2 : 3;
+  // Se puntúan las reglas "de composición" (largo y tipos de caracteres);
+  // solo es "Fuerte" si además cumple todas las restricciones.
+  const composicion = ['contrasenaCorta', 'sinMayuscula', 'sinMinuscula', 'sinNumero', 'sinEspecial'];
+  const puntos = REGLAS_CONTRASENA.filter((r) => composicion.includes(r.clave) && r.cumple(valor, usuario)).length;
+  const todas = REGLAS_CONTRASENA.every((r) => r.cumple(valor, usuario));
+  let nivel = todas ? 3 : puntos <= 2 ? 1 : 2;
   if (nivel === 3 && valor.length >= 12) nivel = 4;
   const niveles = [
     { etiqueta: 'Sin contraseña', clase: 'bg-secondary' },
