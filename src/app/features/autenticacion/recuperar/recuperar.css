@@ -1,0 +1,8 @@
+.pasos li { height: 8px; border-radius: 4px; background: var(--cc-crema); border: 1.5px solid var(--cc-borde); }
+.pasos li.activo { background: var(--cc-naranja-vivo); border-color: var(--cc-tinta); }
+.codigo { font-family: var(--cc-fuente-titulos); font-weight: 800; font-size: 1.25rem; letter-spacing: 0.2em; }
+.codigo-input { font-family: var(--cc-fuente-titulos); letter-spacing: 0.4em; font-size: 1.3rem; max-width: 14rem; }
+.exito-icono {
+  width: 4.5rem; height: 4.5rem; display: grid; place-items: center; font-size: 2.4rem; color: #fff;
+  background: var(--cc-turquesa); border: 2px solid var(--cc-tinta); border-radius: 30%; box-shadow: var(--cc-sombra);
+}
