@@ -58,6 +58,28 @@ export const routes: Routes = [
       import('./features/moderacion/panel/panel-moderacion').then((m) => m.PanelModeracionComponent),
   },
   {
+    path: 'admin',
+    canActivate: [rolGuard(['ADMIN'])],
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'usuarios' },
+      {
+        path: 'usuarios',
+        title: 'Usuarios · Administración · CuboClub',
+        loadComponent: () => import('./features/admin/usuarios/admin-usuarios').then((m) => m.AdminUsuariosComponent),
+      },
+      {
+        path: 'categorias',
+        title: 'Categorías · Administración · CuboClub',
+        loadComponent: () => import('./features/admin/categorias/admin-categorias').then((m) => m.AdminCategoriasComponent),
+      },
+      {
+        path: 'normas',
+        title: 'Normas · Administración · CuboClub',
+        loadComponent: () => import('./features/admin/normas/admin-normas').then((m) => m.AdminNormasComponent),
+      },
+    ],
+  },
+  {
     path: 'login',
     title: 'Ingresar · CuboClub',
     canActivate: [invitadoGuard],
