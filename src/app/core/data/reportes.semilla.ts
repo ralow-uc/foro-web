@@ -1,0 +1,68 @@
+import { Reporte } from '../models';
+
+/**
+ * Reportes semilla: 2 pendientes (igual que el seed de foro-moderacion),
+ * 2 descartados y 1 que terminó en sanción.
+ */
+export const crearReportesSemilla = (): Reporte[] => [
+  {
+    id: 1,
+    tipo: 'TEMA',
+    contenidoId: 2,
+    normaId: 3,
+    reportanteId: 3,
+    detalle: 'Esta pregunta ya se hizo varias veces este mes.',
+    estado: 'PENDIENTE',
+    fechaCreacion: new Date('2026-09-12T10:00:00'),
+    resueltoPorId: null,
+    fechaResolucion: null,
+  },
+  {
+    id: 2,
+    tipo: 'COMENTARIO',
+    contenidoId: 5,
+    normaId: 1,
+    reportanteId: 3,
+    detalle: 'Se burla de quienes usan Roux. No es una forma respetuosa de opinar.',
+    estado: 'PENDIENTE',
+    fechaCreacion: new Date('2026-09-11T08:00:00'),
+    resueltoPorId: null,
+    fechaResolucion: null,
+  },
+  {
+    id: 3,
+    tipo: 'TEMA',
+    contenidoId: 4,
+    normaId: 3,
+    reportanteId: 5,
+    detalle: 'Esto no es de 3x3, debería ir en otra parte.',
+    estado: 'DESCARTADO',
+    fechaCreacion: new Date('2026-09-26T08:00:00'),
+    resueltoPorId: 2,
+    fechaResolucion: new Date('2026-09-26T12:00:00'),
+  },
+  {
+    id: 4,
+    tipo: 'COMENTARIO',
+    contenidoId: 13,
+    normaId: 2,
+    reportanteId: 5,
+    detalle: 'Parece publicidad encubierta del cubo.',
+    estado: 'DESCARTADO',
+    fechaCreacion: new Date('2026-10-21T10:00:00'),
+    resueltoPorId: 2,
+    fechaResolucion: new Date('2026-10-21T15:20:00'),
+  },
+  {
+    id: 5,
+    tipo: 'TEMA',
+    contenidoId: 15,
+    normaId: 2,
+    reportanteId: 4,
+    detalle: 'Venta de cubos con contacto privado: es spam.',
+    estado: 'SANCIONADO',
+    fechaCreacion: new Date('2026-11-15T08:30:00'),
+    resueltoPorId: 2,
+    fechaResolucion: new Date('2026-11-15T09:10:00'),
+  },
+];

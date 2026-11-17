@@ -1,0 +1,13 @@
+.barra {
+  background: var(--cc-tinta);
+  border-bottom: 4px solid var(--cc-naranja-vivo);
+  --bs-navbar-color: rgba(241, 236, 255, 0.82);
+  --bs-navbar-hover-color: #fff;
+  --bs-navbar-active-color: #fff;
+}
+.barra .navbar-brand { color: #fff; }
+.nav-link { font-weight: 700; border-radius: 0.5rem; padding-inline: 0.75rem !important; }
+.nav-link.active { background: rgba(255, 255, 255, 0.1); box-shadow: inset 0 -3px 0 var(--cc-naranja-vivo); }
+.dropdown-menu { min-width: 15rem; }
+.navbar-toggler { border: 2px solid rgba(255, 255, 255, 0.4); }
+.navbar-toggler:focus { box-shadow: 0 0 0 0.2rem rgba(255, 122, 61, 0.5); }

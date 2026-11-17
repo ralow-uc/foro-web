@@ -1,1 +1,282 @@
-/* You can add global styles to this file, and also import other style files */
+/* ==========================================================================
+   CuboClub · Sistema de diseño global
+   Bootstrap 5.3 (CSS compilado) + variables propias "sticker".
+   Paleta inspirada en las pegatinas de un cubo, sobre papel cálido y tinta.
+   ========================================================================== */
+
+:root {
+  /* Paleta de marca */
+  --cc-tinta: #17162b;
+  --cc-tinta-2: #2a2946;
+  --cc-tinta-3: #4a4868;
+  --cc-papel: #f7f3ec;
+  --cc-crema: #efe7d8;
+  --cc-borde: #e2d8c6;
+  --cc-naranja: #c7421a;
+  --cc-naranja-vivo: #ff7a3d;
+  --cc-naranja-rgb: 199, 66, 26;
+  --cc-turquesa: #0b7f73;
+  --cc-turquesa-rgb: 11, 127, 115;
+  --cc-azul: #2b50d6;
+  --cc-amarillo: #f4b92b;
+  --cc-rojo: #c22f3a;
+  --cc-blanco: #fffdf8;
+
+  /* Tipografía */
+  --cc-fuente-titulos: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  --cc-fuente-cuerpo: 'Atkinson Hyperlegible', 'Segoe UI', system-ui, sans-serif;
+
+  /* Sombra "sticker" desplazada */
+  --cc-sombra: 4px 4px 0 var(--cc-tinta);
+  --cc-sombra-suave: 0 1px 0 var(--cc-borde), 0 8px 24px -12px rgba(23, 22, 43, 0.25);
+
+  /* Reasignación de variables de Bootstrap */
+  --bs-primary: var(--cc-naranja);
+  --bs-primary-rgb: var(--cc-naranja-rgb);
+  --bs-success: var(--cc-turquesa);
+  --bs-success-rgb: var(--cc-turquesa-rgb);
+  --bs-danger: var(--cc-rojo);
+  --bs-danger-rgb: 194, 47, 58;
+  --bs-warning-rgb: 244, 185, 43;
+  --bs-info-rgb: 43, 80, 214;
+  --bs-dark-rgb: 23, 22, 43;
+  --bs-body-font-family: var(--cc-fuente-cuerpo);
+  --bs-body-font-size: 1rem;
+  --bs-body-line-height: 1.6;
+  --bs-body-bg: var(--cc-papel);
+  --bs-body-color: var(--cc-tinta);
+  --bs-secondary-color: #5d5a73;
+  --bs-link-color: var(--cc-naranja);
+  --bs-link-color-rgb: var(--cc-naranja-rgb);
+  --bs-link-hover-color: #9a3313;
+  --bs-link-hover-color-rgb: 154, 51, 19;
+  --bs-border-color: var(--cc-borde);
+  --bs-border-radius: 0.6rem;
+  --bs-border-radius-sm: 0.4rem;
+  --bs-border-radius-lg: 0.9rem;
+  --bs-primary-text-emphasis: #7d2a10;
+  --bs-primary-bg-subtle: #fbe3d8;
+  --bs-primary-border-subtle: #f2b69e;
+  --bs-success-text-emphasis: #075349;
+  --bs-success-bg-subtle: #d5f0ec;
+  --bs-success-border-subtle: #93d4cb;
+  --bs-focus-ring-color: rgba(var(--cc-naranja-rgb), 0.3);
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6,
+.navbar-brand, .display-1, .display-2, .display-3, .display-4, .display-5, .display-6 {
+  font-family: var(--cc-fuente-titulos);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.fuente-titulos { font-family: var(--cc-fuente-titulos); }
+
+::selection { background: var(--cc-amarillo); color: var(--cc-tinta); }
+
+/* ---------- Botones ---------- */
+.btn { font-weight: 700; border-radius: 0.55rem; }
+
+.btn-primary {
+  --bs-btn-bg: var(--cc-naranja);
+  --bs-btn-border-color: var(--cc-naranja);
+  --bs-btn-hover-bg: #a83712;
+  --bs-btn-hover-border-color: #a83712;
+  --bs-btn-active-bg: #8f2f10;
+  --bs-btn-active-border-color: #8f2f10;
+  --bs-btn-disabled-bg: var(--cc-naranja);
+  --bs-btn-disabled-border-color: var(--cc-naranja);
+  --bs-btn-focus-shadow-rgb: var(--cc-naranja-rgb);
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--cc-naranja);
+  --bs-btn-border-color: var(--cc-naranja);
+  --bs-btn-hover-bg: var(--cc-naranja);
+  --bs-btn-hover-border-color: var(--cc-naranja);
+  --bs-btn-active-bg: #a83712;
+  --bs-btn-active-border-color: #a83712;
+  --bs-btn-disabled-color: var(--cc-naranja);
+  --bs-btn-disabled-border-color: var(--cc-naranja);
+  --bs-btn-focus-shadow-rgb: var(--cc-naranja-rgb);
+}
+
+.btn-success {
+  --bs-btn-bg: var(--cc-turquesa);
+  --bs-btn-border-color: var(--cc-turquesa);
+  --bs-btn-hover-bg: #086a60;
+  --bs-btn-hover-border-color: #086a60;
+  --bs-btn-active-bg: #065a52;
+}
+
+.btn-outline-success {
+  --bs-btn-color: var(--cc-turquesa);
+  --bs-btn-border-color: var(--cc-turquesa);
+  --bs-btn-hover-bg: var(--cc-turquesa);
+  --bs-btn-hover-border-color: var(--cc-turquesa);
+  --bs-btn-active-bg: #086a60;
+}
+
+.btn-dark {
+  --bs-btn-bg: var(--cc-tinta);
+  --bs-btn-border-color: var(--cc-tinta);
+  --bs-btn-hover-bg: var(--cc-tinta-2);
+  --bs-btn-hover-border-color: var(--cc-tinta-2);
+}
+
+.btn-sticker {
+  box-shadow: var(--cc-sombra);
+  border: 2px solid var(--cc-tinta) !important;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.btn-sticker:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--cc-tinta); }
+.btn-sticker:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--cc-tinta); }
+
+/* ---------- Formularios ---------- */
+.form-label { font-weight: 700; font-size: 0.92rem; margin-bottom: 0.3rem; }
+.form-control, .form-select {
+  background-color: var(--cc-blanco);
+  border-color: #d4c9b5;
+  border-width: 1.5px;
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--cc-naranja-vivo);
+  box-shadow: 0 0 0 0.22rem rgba(var(--cc-naranja-rgb), 0.18);
+}
+.form-control.is-invalid:focus, .form-select.is-invalid:focus {
+  box-shadow: 0 0 0 0.22rem rgba(194, 47, 58, 0.2);
+}
+.form-check-input:checked { background-color: var(--cc-naranja); border-color: var(--cc-naranja); }
+.form-check-input:focus { border-color: var(--cc-naranja-vivo); box-shadow: 0 0 0 0.22rem rgba(var(--cc-naranja-rgb), 0.18); }
+.form-text { color: var(--bs-secondary-color); }
+.invalid-feedback { font-weight: 700; font-size: 0.85rem; }
+
+/* ---------- Tarjetas ---------- */
+.card {
+  --bs-card-bg: var(--cc-blanco);
+  --bs-card-border-color: var(--cc-borde);
+  --bs-card-cap-bg: transparent;
+  border-width: 1.5px;
+}
+
+.tarjeta-sticker {
+  border: 2px solid var(--cc-tinta);
+  box-shadow: var(--cc-sombra);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+a.tarjeta-sticker:hover, .tarjeta-sticker.interactiva:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--cc-tinta);
+}
+
+.tarjeta-panel {
+  background: var(--cc-blanco);
+  border: 1.5px solid var(--cc-borde);
+  border-radius: var(--bs-border-radius-lg);
+  box-shadow: var(--cc-sombra-suave);
+}
+
+/* ---------- Navegación, paginación, pestañas ---------- */
+.nav-pills {
+  --bs-nav-pills-link-active-bg: var(--cc-tinta);
+  --bs-nav-link-color: var(--cc-tinta-2);
+  --bs-nav-link-hover-color: var(--cc-naranja);
+}
+.nav-pills .nav-link { font-weight: 700; }
+.pagination {
+  --bs-pagination-color: var(--cc-tinta);
+  --bs-pagination-bg: var(--cc-blanco);
+  --bs-pagination-active-bg: var(--cc-tinta);
+  --bs-pagination-active-border-color: var(--cc-tinta);
+  --bs-pagination-hover-color: var(--cc-naranja);
+  --bs-pagination-focus-color: var(--cc-naranja);
+  --bs-pagination-focus-box-shadow: 0 0 0 0.2rem rgba(var(--cc-naranja-rgb), 0.2);
+}
+.dropdown-menu {
+  --bs-dropdown-link-active-bg: var(--cc-naranja);
+  --bs-dropdown-border-color: var(--cc-borde);
+  box-shadow: var(--cc-sombra-suave);
+}
+.progress { --bs-progress-bg: var(--cc-crema); }
+.table { --bs-table-bg: transparent; }
+.table > thead { font-family: var(--cc-fuente-titulos); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.badge { font-weight: 700; letter-spacing: 0.02em; }
+.alert { border-width: 1.5px; }
+.modal-content { border: 2px solid var(--cc-tinta); box-shadow: 6px 6px 0 var(--cc-tinta); }
+.modal-header, .modal-footer { border-color: var(--cc-borde); }
+
+/* ---------- Elementos propios ---------- */
+
+/* Barra de tres "pegatinas" bajo los títulos de sección */
+.pegatinas {
+  display: inline-flex;
+  gap: 4px;
+  vertical-align: middle;
+}
+.pegatinas > span { width: 14px; height: 14px; border-radius: 3px; border: 1.5px solid var(--cc-tinta); }
+.pegatinas > span:nth-child(1) { background: var(--cc-naranja-vivo); }
+.pegatinas > span:nth-child(2) { background: var(--cc-amarillo); }
+.pegatinas > span:nth-child(3) { background: var(--cc-turquesa); }
+
+.titulo-seccion { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+
+.etiqueta-superior {
+  font-family: var(--cc-fuente-titulos);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--cc-naranja);
+}
+
+.fondo-cuadricula {
+  background-color: var(--cc-crema);
+  background-image:
+    linear-gradient(rgba(23, 22, 43, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(23, 22, 43, 0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.contenido-tema { white-space: pre-line; overflow-wrap: anywhere; }
+.texto-cortado-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.contenido-baneado {
+  border-left: 4px solid var(--cc-rojo) !important;
+  background: repeating-linear-gradient(-45deg, #fff6f4, #fff6f4 10px, #fdecea 10px, #fdecea 20px) !important;
+}
+
+.min-w-0 { min-width: 0; }
+.cursor-pointer { cursor: pointer; }
+main { flex: 1 0 auto; }
+
+/* Botón para saltar al contenido (accesibilidad) */
+.saltar-contenido {
+  position: absolute;
+  left: 1rem;
+  top: -3rem;
+  z-index: 2000;
+  background: var(--cc-amarillo);
+  color: var(--cc-tinta);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+}
+.saltar-contenido:focus { top: 0.5rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
