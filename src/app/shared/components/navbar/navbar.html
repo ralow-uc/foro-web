@@ -1,0 +1,29 @@
+<nav class="navbar navbar-expand-lg navbar-dark barra sticky-top" aria-label="Navegación principal">
+  <div class="container">
+    <a class="navbar-brand py-0" routerLink="/" (click)="cerrarMenu()" aria-label="CuboClub, ir al inicio">
+      <app-logo [tamano]="38" />
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal"
+      aria-controls="menuPrincipal" aria-expanded="false" aria-label="Abrir menú">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="menuPrincipal" #menu>
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="cerrarMenu()">
+            <i class="bi bi-house-door me-1" aria-hidden="true"></i>Inicio
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/normas" routerLinkActive="active" (click)="cerrarMenu()">
+            <i class="bi bi-journal-check me-1" aria-hidden="true"></i>Normas
+          </a>
+        </li>
+      </ul>
+      <div class="d-flex flex-column flex-lg-row gap-2 pb-3 pb-lg-0">
+        <a routerLink="/login" class="btn btn-outline-light" (click)="cerrarMenu()">Ingresar</a>
+        <a routerLink="/registro" class="btn btn-primary" (click)="cerrarMenu()">Crear cuenta</a>
+      </div>
+    </div>
+  </div>
+</nav>
