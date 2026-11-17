@@ -1,0 +1,25 @@
+Recorrido en Chrome (headless) contra la imagen Docker foro-web:local, 2026-11-17 18:31.
+Anchos: 375 px (móvil), 768 px (tablet), 1280 px (escritorio). Sin desbordes horizontales.
+
+OK   inicio muestra 12 enlaces a categorías
+OK   visitante: tema baneado oculto (no disponible)
+OK   visitante en /moderacion → redirigido a /login
+OK   login vacío muestra 2 errores de validación
+OK   cuenta inactiva (tymon) rechazada con mensaje claro
+OK   registro inválido muestra 5 errores (usuario duplicado, contraseña débil…)
+OK   registro válido crea la cuenta e inicia sesión (→ /perfil)
+OK   recuperar: correo inexistente rechazado
+OK   recuperar: código simulado de 6 dígitos mostrado
+OK   recuperar: contraseña restablecida
+OK   USUARIO no ve el enlace a moderación
+OK   modal de reporte valida norma y detalle
+OK   USUARIO reporta un tema ajeno
+OK   moderadora ve 3 reportes pendientes (2 semilla + 1 nuevo de feliks)
+OK   moderadora banea contenido desde un reporte
+OK   MODERADOR no puede levantar baneos (solo ADMIN)
+OK   MODERADOR en /admin/usuarios → acceso denegado
+OK   ADMIN levanta un baneo
+OK   formulario de categoría valida campos
+OK   ADMIN crea categoría con slug automático
+OK   ADMIN abre su perfil
+Sin errores de consola
