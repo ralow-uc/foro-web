@@ -1,0 +1,47 @@
+import { Sancion } from '../models';
+
+/** Sanciones semilla: dos históricas ya levantadas por el ADMIN y una activa de demostración. */
+export const crearSancionesSemilla = (): Sancion[] => [
+  {
+    id: 1,
+    tipo: 'TEMA',
+    contenidoId: 4,
+    normaId: 3,
+    moderadorId: 2,
+    motivo: 'Tema publicado en una categoría que no corresponde.',
+    reporteId: null,
+    activa: false,
+    fechaCreacion: new Date('2026-09-26T09:00:00'),
+    levantadaPorId: 1,
+    motivoLevantamiento: 'Revisado: el 4x4 sí pertenece a la categoría Big cubes.',
+    fechaLevantamiento: new Date('2026-09-26T11:30:00'),
+  },
+  {
+    id: 2,
+    tipo: 'COMENTARIO',
+    contenidoId: 7,
+    normaId: 3,
+    moderadorId: 2,
+    motivo: 'Comentario fuera del tema principal del hilo.',
+    reporteId: null,
+    activa: false,
+    fechaCreacion: new Date('2026-09-19T13:00:00'),
+    levantadaPorId: 1,
+    motivoLevantamiento: 'El comentario sí aporta al tema; se restituye.',
+    fechaLevantamiento: new Date('2026-09-20T10:00:00'),
+  },
+  {
+    id: 3,
+    tipo: 'TEMA',
+    contenidoId: 15,
+    normaId: 2,
+    moderadorId: 2,
+    motivo: 'Publicidad de venta de cubos con datos de contacto privado.',
+    reporteId: 5,
+    activa: true,
+    fechaCreacion: new Date('2026-11-15T09:10:00'),
+    levantadaPorId: null,
+    motivoLevantamiento: null,
+    fechaLevantamiento: null,
+  },
+];
