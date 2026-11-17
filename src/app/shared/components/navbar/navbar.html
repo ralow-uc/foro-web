@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark barra sticky-top" aria-label="Navegación principal">
+<nav class="navbar navbar-expand-xl navbar-dark barra sticky-top" aria-label="Navegación principal">
   <div class="container">
     <a class="navbar-brand py-0" routerLink="/" (click)="cerrarMenu()" aria-label="CuboClub, ir al inicio">
       <app-logo [tamano]="38" />
@@ -8,7 +8,7 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="menuPrincipal" #menu>
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+      <ul class="navbar-nav me-auto mb-2 mb-xl-0 ms-xl-3">
         <li class="nav-item">
           <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="cerrarMenu()">
             <i class="bi bi-house-door me-1" aria-hidden="true"></i>Inicio
@@ -49,7 +49,7 @@
       </ul>
 
       @if (auth.usuarioActual(); as usuario) {
-        <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-2 pb-3 pb-lg-0">
+        <div class="d-flex flex-column flex-xl-row align-items-xl-center gap-2 pb-3 pb-xl-0">
           <a routerLink="/temas/nuevo" class="btn btn-primary" (click)="cerrarMenu()">
             <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Nuevo tema
           </a>
@@ -61,11 +61,17 @@
                 <span class="d-block fw-bold text-truncate">&#64;{{ usuario.nombreUsuario }}</span>
               </span>
               @if (auth.rolPrincipal(); as rol) {
-                <app-badge-rol [rol]="rol" />
+                <!-- En la barra horizontal solo cabe desde 1400 px; en el menú colapsado siempre se ve. -->
+                <app-badge-rol class="d-xl-none d-xxl-inline" [rol]="rol" />
               }
             </button>
-            <ul class="dropdown-menu dropdown-menu-lg-end">
-              <li><h2 class="dropdown-header">{{ usuario.nombreVisible }}</h2></li>
+            <ul class="dropdown-menu dropdown-menu-xl-end">
+              <li>
+                <h2 class="dropdown-header d-flex align-items-center justify-content-between gap-2">
+                  {{ usuario.nombreVisible }}
+                  @if (auth.rolPrincipal(); as rol) { <app-badge-rol [rol]="rol" /> }
+                </h2>
+              </li>
               <li><a class="dropdown-item" routerLink="/perfil" (click)="cerrarMenu()"><i class="bi bi-person-circle me-2"></i>Mi perfil</a></li>
               <li><a class="dropdown-item" routerLink="/mis-temas" (click)="cerrarMenu()"><i class="bi bi-collection me-2"></i>Mis temas</a></li>
               <li><hr class="dropdown-divider" /></li>
@@ -74,7 +80,7 @@
           </div>
         </div>
       } @else {
-        <div class="d-flex flex-column flex-lg-row gap-2 pb-3 pb-lg-0">
+        <div class="d-flex flex-column flex-xl-row gap-2 pb-3 pb-xl-0">
           <a routerLink="/login" class="btn btn-outline-light" (click)="cerrarMenu()">Ingresar</a>
           <a routerLink="/registro" class="btn btn-primary" (click)="cerrarMenu()">Crear cuenta</a>
         </div>
