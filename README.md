@@ -48,7 +48,7 @@ docker build -t foro-web .
 docker run -p 8090:80 foro-web  # http://localhost:8090
 ```
 
-El despliegue junto a los microservicios (Play with Docker) está en
+El despliegue en la nube junto a los microservicios (Render, <https://foro-web-q4en.onrender.com>) está en
 [`../foro-despliegue`](../foro-despliegue).
 
 ## 3. Cuentas de demostración
